@@ -51,7 +51,9 @@ def is_valid_cas(cas):
     check_digit = int(parts[-1])
 
     total = sum(int(num) * (i + 1) for i, num in enumerate(reversed(digits)))
-    return total % 10 == check_digit
+    valid = total % 10 == check_digit
+    print("valid cas = ", valid)
+    return valid
 
 def extract_all_cas_numbers(text):
     cas_label_pattern = r"(?:\bCAS[-\s]?No\.?|\bCAS\b)" # looks for any version of CAS, CAS-NO, ETC., but not CAS[A-Z] (followed by some other letter)
@@ -337,6 +339,7 @@ def extract_additional_safety_info(text):
     
     section_5 = extract_section(text,5)
     section_7 = extract_section(text,7)
+    # print("section 7 text", section_7)
     section_9 = extract_section(text,9)
     section_10 = extract_section(text,10)
 
@@ -370,10 +373,14 @@ def extract_additional_safety_info(text):
 
 
     # SUBSECTION 9B. storage conditions (section 7 SDS)
-    match = re.search(r"(storage\s*conditions?|storage\s*requirements?)[:\-]?\s*([^.;\n]+)", section_7, re.IGNORECASE)
-    if match:
+    storage_match = re.search(
+        r"(?:storage\s*(?:conditions|requirements|information)?[^:\n]*[:\-]?\s*)(.*?)(?=\n\s*\S|\Z)",
+        section_7,
+        re.IGNORECASE | re.DOTALL
+    )
+    if storage_match:
+        info["storage_conditions"] = storage_match.group(1).strip().replace('\n', ' ')
         print("found storage condition match")
-        info["storage_conditions"] = match.group(2).strip()
 
 
     # SUBSECTION 9C. reactivity information (section 10 SDS)
