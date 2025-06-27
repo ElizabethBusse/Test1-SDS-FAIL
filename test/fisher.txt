@@ -1,0 +1,375 @@
+Safety Data Sheet
+according to 29CFR1910/1200 and GHS Rev. 3
+Effective date : 10.24.2014
+Page 1 of 7
+Acetone ACS Grade
+Created by Global Safety Management, Inc. -Tel: 1-813-435-5161 - www.gsmsds.com
+SECTION 1 : Identification of the substance/mixture and of the supplier
+Product name :
+Acetone ACS Grade
+Manufacturer/Supplier Trade name:
+Manufacturer/Supplier Article number:
+S25120
+Recommended uses of the product and uses restrictions on use:
+Manufacturer Details:
+AquaPhoenix Scientific
+9 Barnhart Drive, Hanover, PA 17331
+Supplier Details:
+Fisher Science Education
+15 Jet View Drive, Rochester, NY 14624
+Emergency telephone number:
+Fisher Science Education    Emergency Telephone No.: 800-535-5053
+SECTION 2 : Hazards identification
+Classification of the substance or mixture:
+Flammable
+Flammable liquids, category 2
+Irritant
+Eye irritation, category 2A
+Specific target organ toxicity following single exposure, category 3
+Flam. Liq. 2
+Eye Irrit. 2A
+STOT SE 3
+Signal word :Danger
+Hazard statements:
+Highly flammable liquid and vapour
+Causes serious eye irritation
+May cause drowsiness or dizziness
+Precautionary statements:
+If medical advice is needed, have product container or label at hand
+Keep out of reach of children
+Read label before use
+Keep away from heat/sparks/open flames/hot surfaces. No smoking
+Wear protective gloves/protective clothing/eye protection/face protection
+Keep container tightly closed
+Ground/bond container and receiving equipment
+Use explosion-proof electrical/ventilating/light/equipment
+Use only non-sparking tools
+Take precautionary measures against static discharge
+Avoid breathing dust/fume/gas/mist/vapours/spray
+
+Safety Data Sheet
+according to 29CFR1910/1200 and GHS Rev. 3
+Effective date : 10.24.2014
+Page 2 of 7
+Acetone ACS Grade
+Created by Global Safety Management, Inc. -Tel: 1-813-435-5161 - www.gsmsds.com
+Wash skin thoroughly after handling
+Use only outdoors or in a well-ventilated area
+IF ON SKIN (or hair): Remove/Take off immediately all contaminated clothing. Rinse skin with water/shower
+IF INHALED: Remove victim to fresh air and keep at rest in a position comfortable for breathing
+IF IN EYES: Rinse cautiously with water for several minutes. Remove contact lenses if present and easy to do.
+Continue rinsing
+Call a POISON CENTER or doctor/physician if you feel unwell
+If eye irritation persists get medical advice/attention
+In case of fire: Use agents recommended in section 5 for extinction
+Store in a well ventilated place. Keep container tightly closed
+Store in a well ventilated place. Keep cool
+Store locked up
+Protect from sunlight
+Dispose of contents and container to an approved waste disposal plant
+Other Non-GHS Classification:
+WHMIS
+D2B
+B2
+NFPA/HMIS
+NFPA SCALE (0-4)
+HMIS RATINGS (0-4)
+SECTION 3 : Composition/information on ingredients
+Ingredients:
+CAS 67-64-1
+Acetone
+100 %
+Percentages are by weight
+SECTION 4 : First aid measures
+Description of first aid measures
+After inhalation: Loosen clothing as necessary and position individual in a comfortable position.Move exposed
+to fresh air. Give artificial respiration if necessary. If breathing is difficult give oxygen.Get medical assistance if
+cough or other symptoms appear.
+After skin contact: Rinse/flush exposed skin gently using soap and water for 15-20 minutes.Seek medical
+advice if discomfort or irritation persists.
+
+Safety Data Sheet
+according to 29CFR1910/1200 and GHS Rev. 3
+Effective date : 10.24.2014
+Page 3 of 7
+Acetone ACS Grade
+Created by Global Safety Management, Inc. -Tel: 1-813-435-5161 - www.gsmsds.com
+After eye contact: Protect unexposed eye.Rinse/flush exposed eye(s) gently using water for 15-20
+minutes.Remove contact lens(es) if able to do so during rinsing.Seek medical attention if irritation persists or if
+concerned.
+After swallowing: Rinse mouth thoroughly. Do not induce vomiting. Seek medical attention if irritation,
+discomfort, or vomiting persists.Never give anything by mouth to an unconscious person.
+Most important symptoms and effects, both acute and delayed:
+Irritation.Headache.Nausea.Shortness of breath.;
+Indication of any immediate medical attention and special treatment needed:
+If seeking medical attention provide SDS document to physician. Physician should treat symptomatically.
+SECTION 5 : Firefighting measures
+Extinguishing media
+Suitable extinguishing agents: Use dry chemical, chemical foam, carbon dioxide, or alcohol-resistant foam.
+For safety reasons unsuitable extinguishing agents: Water may be ineffective.
+Special hazards arising from the substance or mixture:
+Thermal decomposition can lead to release of irritating gases and vapors.Carbon oxides.Vapors can flow to
+distant ignition sources and flashback
+Advice for firefighters:
+Protective equipment: Wear protective eyeware, gloves, and clothing. Refer to Section 8.Use NIOSH-
+approved respiratory protection/breathing apparatus.
+Additional information (precautions): Avoid inhaling gases, fumes, dust, mist, vapor, and aerosols. Avoid
+contact with skin, eyes, and clothing.
+SECTION 6 : Accidental release measures
+Personal precautions, protective equipment and emergency procedures:
+Ensure adequate ventilation.Ensure that air-handling systems are operational.Avoid contact with skin, eyes and
+clothing.Remove all sources of ignition.
+Environmental precautions:
+Should not be released into environment.Prevent from reaching drains, sewer, or waterway.
+Methods and material for containment and cleaning up:
+Wear protective eyeware, gloves, and clothing. Refer to Section 8.Always obey local regulations.Containerize
+for disposal. Refer to Section 13.Use spark-proof tools and explosion-proof equipment.Remove all sources of
+ignition.If necessary use trained response staff or contractor. Evacuate personnel to safe areas. Keep in suitable
+closed containers for disposal.
+Reference to other sections:
+SECTION 7 : Handling and storage
+Precautions for safe handling:
+Avoid contact with skin, eyes, and clothing.Follow good hygiene procedures when handling chemical materials.
+Refer to Section 8.Follow proper disposal methods. Refer to Section 13.Do not eat, drink, smoke, or use
+personal products when handling chemical substances.Use under a chemical fume hood.Use explosion-proof
+equipment.
+Conditions for safe storage, including any incompatibilities:
+Store in a cool location. Keep away from food and beverages.Protect from freezing and physical damage.Keep
+away from open flames, hot surfaces and sources of ignition.Provide ventilation for containers. Keep container
+
+Safety Data Sheet
+according to 29CFR1910/1200 and GHS Rev. 3
+Effective date : 10.24.2014
+Page 4 of 7
+Acetone ACS Grade
+Created by Global Safety Management, Inc. -Tel: 1-813-435-5161 - www.gsmsds.com
+tightly sealed.Store away from incompatible materials.
+SECTION 8 : Exposure controls/personal protection
+Control Parameters:
+67-64-1, Acetone, ACGIH TLV TWA 1,200 mg/m3
+67-64-1, Acetone, OSHA PEL TWA 2,400 mg/m3
+Appropriate Engineering controls:
+Emergency eye wash fountains and safety showers should be available in
+the immediate vicinity of use or handling. Provide exhaust ventilation or
+other engineering controls to keep the airborne concentrations of vapor
+and mists below the applicable workplace exposure limits (Occupational
+Exposure Limits-OELs) indicated above.Use under a chemical fume hood.
+Respiratory protection:
+Not required under normal conditions of use. Where risk assessment
+shows air-purifying respirators are appropriate use a full-face particle
+respirator type N100 (US) or type P3 (EN 143) respirator cartridges as a
+backup to engineering controls.When necessary use NIOSH approved
+breathing equipment.
+Protection of skin:
+Select glove material impermeable and resistant to the substance.Select
+glove material based on rates of diffusion and degradation. Dispose of
+contaminated gloves after use in accordance with applicable laws and
+good laboratory practices.Use proper glove removal technique without
+touching outer surface. Avoid skin contact with used gloves.Wear
+protective clothing.
+Eye protection:
+Wear equipment for eye protection tested and approved under
+appropriate government standards such as NIOSH (US) or EN
+166(EU).Safety glasses or goggles are appropriate eye protection.
+General hygienic measures:
+Perform routine housekeeping. Wash hands before breaks and at the end
+of work. Avoid contact with skin, eyes, and clothing.Before wearing wash
+contaminated clothing.
+SECTION 9 : Physical and chemical properties
+Appearance (physical
+state,color):
+Clear, colorless liquid
+Explosion limit lower:
+Explosion limit upper:
+2 %(V)
+13 %(V)
+Odor:
+sweet
+Vapor pressure:
+231 mm Hg @ 25°C
+Odor threshold:
+Not determined
+Vapor density:
+0.791 g/cm3 at 25 °C (77 °F)
+pH-value:
+7
+Relative density:
+Not determined
+Melting/Freezing point:
+-94 °C (-137 °F)
+Solubilities:
+miscible in water
+Boiling point/Boiling
+range:
+56 °C (133 °F)
+Partition coefficient (n-
+octanol/water):
+log Pow: -0.24
+Flash point (closed
+cup):
+-17.0 °C (1.4 °F)
+Auto/Self-ignition
+temperature:
+465.0 °C (869.0 °F)
+Evaporation rate:
+0.1
+Decomposition
+temperature:
+Not determined
+
+Safety Data Sheet
+according to 29CFR1910/1200 and GHS Rev. 3
+Effective date : 10.24.2014
+Page 5 of 7
+Acetone ACS Grade
+Created by Global Safety Management, Inc. -Tel: 1-813-435-5161 - www.gsmsds.com
+Flammability
+(solid,gaseous):
+flammable liquid
+Viscosity:
+a. Kinematic:Not determined
+b. Dynamic: Not determined
+Density: Not determined
+SECTION 10 : Stability and reactivity
+Reactivity:Nonreactive under normal conditions.
+Chemical stability:Stable under normal conditions.
+Possible hazardous reactions:Acetone reacts violently with phosphorous oxychloride.Vapours may form
+explosive mixture with air.
+Conditions to avoid:Incompatible materials.Heat, Sparks, Open Flames.Direct Sunlight
+Incompatible materials:Strong oxidizing agents.Strong reducing agents.Strong Bases.Nitric acid.sulfur dichloride
+potassium tert-butoxide. hexachloromelamine. chloroform. alkali, sulfuric acid
+Hazardous decomposition products:Carbon oxides.
+SECTION 11 : Toxicological information
+Acute Toxicity:
+Oral:
+67-64-1 (acetone)
+LD50 Rat: 5800 mg/kg
+Inhalation:
+67-64-1 (acetone)
+LD50 Rat: 50100 mg/m3/8 h
+Dermal:
+67-64-1 (acetone)
+LD50 Rabbit: 20000 mg/kg
+Chronic Toxicity: No additional information.
+Corrosion Irritation:
+Ocular:
+67-64-1 (acetone)
+Rabbit: Mild Eye Irritation - 24 - h
+Dermal:
+67-64-1 (acetone)
+Rabbit: Mild Skin Irritation - 24 h
+Sensitization:
+guinea pig - Does not cause skin
+sensitisation.
+Single Target Organ (STOT):
+May cause drowsiness or dizziness.
+Numerical Measures:
+No additional information.
+Carcinogenicity:
+Not listed as a carcinogen (ACGIH, IARC,
+NTP): 67-64-1 (acetone)
+Mutagenicity:
+No additional information.
+Reproductive Toxicity:
+No additional information.
+SECTION 12 : Ecological information
+Ecotoxicity
+Fish LC50 - Oncorhynchus mykiss (rainbow trout) - 5,540 mg/l - 96 h: 67-64-1 (acetone)
+Invertebrates EC50 - Daphnia magna (Water flea) - 8,800 mg/l - 48 h: 67-64-1 (acetone)
+Persistence and degradability: Readily biodegradable.
+Bioaccumulative potential: Not Bioaccumulative.
+Mobility in soil: Aqueous solution has high mobility in soil.
+
+Safety Data Sheet
+according to 29CFR1910/1200 and GHS Rev. 3
+Effective date : 10.24.2014
+Page 6 of 7
+Acetone ACS Grade
+Created by Global Safety Management, Inc. -Tel: 1-813-435-5161 - www.gsmsds.com
+Other adverse effects: None identified.
+SECTION 13 : Disposal considerations
+Waste disposal recommendations:
+Contact a licensed professional waste disposal service to dispose of this material.Dispose of empty containers
+as unused product.Product or containers must not be disposed with household garbage. It is the responsibility
+of the waste generator to properly characterize all waste materials according to applicable regulatory entities
+(US 40CFR262.11). Chemical waste generators must determine whether a discarded chemical is classified as a
+hazardous waste. Chemical waste generators must also consult local, regional, and national hazardous waste
+regulations. Ensure complete and accurate classification.
+SECTION 14 : Transport information
+UN-Number
+1090
+UN proper shipping name
+Acetone
+Transport hazard class(es)
+Class:
+3 Flammable liquids
+Packing group:II
+Environmental hazard:
+Transport in bulk:
+Special precautions for user:
+SECTION 15 : Regulatory information
+United States (USA)
+SARA Section 311/312 (Specific toxic chemical listings):
+Acute, Chronic, Fire
+SARA Section 313 (Specific toxic chemical listings):
+None of the ingredients is listed
+RCRA (hazardous waste code):
+67-64-1 Acetone - U002
+TSCA (Toxic Substances Control Act):
+All ingredients are listed.
+CERCLA (Comprehensive Environmental Response, Compensation, and Liability Act):
+67-64-1 Acetone 5000 lb
+Proposition 65 (California):
+Chemicals known to cause cancer:
+None of the ingredients is listed
+Chemicals known to cause reproductive toxicity for females:
+None of the ingredients is listed
+Chemicals known to cause reproductive toxicity for males:
+
+Safety Data Sheet
+according to 29CFR1910/1200 and GHS Rev. 3
+Effective date : 10.24.2014
+Page 7 of 7
+Acetone ACS Grade
+Created by Global Safety Management, Inc. -Tel: 1-813-435-5161 - www.gsmsds.com
+None of the ingredients is listed
+Chemicals known to cause developmental toxicity:
+None of the ingredients is listed
+Canada
+Canadian Domestic Substances List (DSL):
+All ingredients are listed.
+Canadian NPRI Ingredient Disclosure list (limit 0.1%):
+None of the ingredients is listed
+Canadian NPRI Ingredient Disclosure list (limit 1%):
+67-64-1 Acetone
+SECTION 16 : Other information
+This product has been classified in accordance with hazard criteria of the Controlled Products Regulations and the
+SDS contains all the information required by the Controlled Products Regulations.Note:. The responsibility to
+provide a safe workplace remains with the user.The user should consider the health hazards and safety information
+contained herein as a guide and should take those precautions required in an individual operation to instruct
+employees and develop work practice procedures for a safe work environment.The information contained herein is,
+to the best of our knowledge and belief, accurate.However, since the conditions of handling and use are beyond
+our control, we make no guarantee of results, and assume no liability for damages incurred by the use of this
+material.It is the responsibility of the user to comply with all applicable laws and regulations applicable to this
+material.
+GHS Full Text Phrases:
+Abbreviations and acronyms:
+IMDG: International Maritime Code for Dangerous Goods
+IATA: International Air Transport Association
+GHS: Globally Harmonized System of Classification and Labelling of Chemicals
+ACGIH: American Conference of Governmental Industrial Hygienists
+CAS: Chemical Abstracts Service (division of the American Chemical Society)
+NFPA: National Fire Protection Association (USA)
+HMIS: Hazardous Materials Identification System (USA)
+WHMIS: Workplace Hazardous Materials Information System (Canada)
+DNEL: Derived No-Effect Level (REACH)
+PNEC: Predicted No-Effect Concentration (REACH)
+CFR: Code of Federal Regulations (USA)
+SARA: Superfund Amendments and Reauthorization Act (USA)
+RCRA: Resource Conservation and Recovery Act (USA)
+TSCA: Toxic Substances Control Act (USA)
+NPRI: National Pollutant Release Inventory (Canada)
+DOT: US Department of Transportation
+Effective date : 10.24.2014
+Last updated : 03.23.2015
+

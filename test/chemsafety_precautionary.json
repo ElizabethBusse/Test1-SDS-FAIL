@@ -1,0 +1,574 @@
+[
+  {
+    "code": "P101",
+    "phrase": "If medical advice is needed, have product container or label at hand."
+  },
+  {
+    "code": "P102",
+    "phrase": "Keep out of reach of children."
+  },
+  {
+    "code": "P103",
+    "phrase": "Read label before use"
+  },
+  {
+    "code": "P201",
+    "phrase": "Obtain special instructions before use."
+  },
+  {
+    "code": "P202",
+    "phrase": "Do not handle until all safety precautions have been read and understood."
+  },
+  {
+    "code": "P210",
+    "phrase": "Keep away from heat, hot surface, sparks, open flames and other ignition sources. - No smoking."
+  },
+  {
+    "code": "P211",
+    "phrase": "Do not spray on an open flame or other ignition source."
+  },
+  {
+    "code": "P212",
+    "phrase": "Avoid heating under confinement or reduction of the desensitized agent."
+  },
+  {
+    "code": "P220",
+    "phrase": "Keep away from clothing and other combustible materials."
+  },
+  {
+    "code": "P221",
+    "phrase": "Take any precaution to avoid mixing with combustibles/..."
+  },
+  {
+    "code": "P222",
+    "phrase": "Do not allow contact with air."
+  },
+  {
+    "code": "P223",
+    "phrase": "Do not allow contact with water."
+  },
+  {
+    "code": "P230",
+    "phrase": "Keep wetted with ..."
+  },
+  {
+    "code": "P231",
+    "phrase": "Handle under inert gas."
+  },
+  {
+    "code": "P232",
+    "phrase": "Protect from moisture."
+  },
+  {
+    "code": "P233",
+    "phrase": "Keep container tightly closed."
+  },
+  {
+    "code": "P234",
+    "phrase": "Keep only in original container."
+  },
+  {
+    "code": "P235",
+    "phrase": "Keep cool."
+  },
+  {
+    "code": "P240",
+    "phrase": "Ground/bond container and receiving equipment."
+  },
+  {
+    "code": "P241",
+    "phrase": "Use explosion-proof [electrical/ventilating/lighting/.../] equipment."
+  },
+  {
+    "code": "P242",
+    "phrase": "Use only non-sparking tools."
+  },
+  {
+    "code": "P243",
+    "phrase": "Take precautionary measures against static discharge."
+  },
+  {
+    "code": "P244",
+    "phrase": "Keep valves and fittings free from oil and grease."
+  },
+  {
+    "code": "P250",
+    "phrase": "Do not subject to grinding/shock/friction/..."
+  },
+  {
+    "code": "P251",
+    "phrase": "Do not pierce or burn, even after use."
+  },
+  {
+    "code": "P260",
+    "phrase": "Do not breathe dust/fume/gas/mist/vapors/spray."
+  },
+  {
+    "code": "P261",
+    "phrase": "Avoid breathing dust/fume/gas/mist/vapors/spray."
+  },
+  {
+    "code": "P262",
+    "phrase": "Do not get in eyes, on skin, or on clothing."
+  },
+  {
+    "code": "P263",
+    "phrase": "Avoid contact during pregnancy/while nursing."
+  },
+  {
+    "code": "P264",
+    "phrase": "Wash ... thoroughly after handling."
+  },
+  {
+    "code": "P270",
+    "phrase": "Do not eat, drink or smoke when using this product."
+  },
+  {
+    "code": "P271",
+    "phrase": "Use only outdoors or in a well-ventilated area."
+  },
+  {
+    "code": "P272",
+    "phrase": "Contaminated work clothing should not be allowed out of the workplace."
+  },
+  {
+    "code": "P273",
+    "phrase": "Avoid release to the environment."
+  },
+  {
+    "code": "P280",
+    "phrase": "Wear protective gloves/protective clothing/eye protection/face protection."
+  },
+  {
+    "code": "P281",
+    "phrase": "Use personal protective equipment as required."
+  },
+  {
+    "code": "P282",
+    "phrase": "Wear cold insulating gloves/face shield/eye protection."
+  },
+  {
+    "code": "P283",
+    "phrase": "Wear fire resistant or flame retardant clothing."
+  },
+  {
+    "code": "P284",
+    "phrase": "[In case of inadequate ventilation] Wear respiratory protection."
+  },
+  {
+    "code": "P285",
+    "phrase": "In case of inadequate ventilation wear respiratory protection."
+  },
+  {
+    "code": "P231+P232",
+    "phrase": "Handle under inert gas/... Protect from moisture."
+  },
+  {
+    "code": "P235+P410",
+    "phrase": "Keep cool. Protect from sunlight."
+  },
+  {
+    "code": "P301",
+    "phrase": "IF SWALLOWED:"
+  },
+  {
+    "code": "P302",
+    "phrase": "IF ON SKIN:"
+  },
+  {
+    "code": "P303",
+    "phrase": "IF ON SKIN (or hair):"
+  },
+  {
+    "code": "P304",
+    "phrase": "IF INHALED:"
+  },
+  {
+    "code": "P305",
+    "phrase": "IF IN EYES:"
+  },
+  {
+    "code": "P306",
+    "phrase": "IF ON CLOTHING:"
+  },
+  {
+    "code": "P307",
+    "phrase": "IF exposed:"
+  },
+  {
+    "code": "P308",
+    "phrase": "IF exposed or concerned:"
+  },
+  {
+    "code": "P309",
+    "phrase": "IF exposed or if you feel unwell"
+  },
+  {
+    "code": "P310",
+    "phrase": "Immediately call a POISON CENTER or doctor/physician."
+  },
+  {
+    "code": "P311",
+    "phrase": "Call a POISON CENTER or doctor/..."
+  },
+  {
+    "code": "P312",
+    "phrase": "Call a POISON CENTER or doctor/... if you feel unwell."
+  },
+  {
+    "code": "P313",
+    "phrase": "Get medical advice/attention."
+  },
+  {
+    "code": "P314",
+    "phrase": "Get medical advice/attention if you feel unwell."
+  },
+  {
+    "code": "P315",
+    "phrase": "Get immediate medical advice/attention."
+  },
+  {
+    "code": "P320",
+    "phrase": "Specific treatment is urgent (see ... on this label)."
+  },
+  {
+    "code": "P321",
+    "phrase": "Specific treatment (see ... on this label)."
+  },
+  {
+    "code": "P322",
+    "phrase": "Specific measures (see ...on this label)."
+  },
+  {
+    "code": "P330",
+    "phrase": "Rinse mouth."
+  },
+  {
+    "code": "P331",
+    "phrase": "Do NOT induce vomiting."
+  },
+  {
+    "code": "P332",
+    "phrase": "IF SKIN irritation occurs:"
+  },
+  {
+    "code": "P333",
+    "phrase": "If skin irritation or rash occurs:"
+  },
+  {
+    "code": "P334",
+    "phrase": "Immerse in cool water [or wrap in wet bandages]."
+  },
+  {
+    "code": "P335",
+    "phrase": "Brush off loose particles from skin."
+  },
+  {
+    "code": "P336",
+    "phrase": "Thaw frosted parts with lukewarm water. Do not rub affected area."
+  },
+  {
+    "code": "P337",
+    "phrase": "If eye irritation persists:"
+  },
+  {
+    "code": "P338",
+    "phrase": "Remove contact lenses, if present and easy to do. Continue rinsing."
+  },
+  {
+    "code": "P340",
+    "phrase": "Remove victim to fresh air and keep at rest in a position comfortable for breathing."
+  },
+  {
+    "code": "P341",
+    "phrase": "If breathing is difficult, remove victim to fresh air and keep at rest in a position comfortable for breathing."
+  },
+  {
+    "code": "P342",
+    "phrase": "If experiencing respiratory symptoms:"
+  },
+  {
+    "code": "P350",
+    "phrase": "Gently wash with plenty of soap and water."
+  },
+  {
+    "code": "P351",
+    "phrase": "Rinse cautiously with water for several minutes."
+  },
+  {
+    "code": "P352",
+    "phrase": "Wash with plenty of water/..."
+  },
+  {
+    "code": "P353",
+    "phrase": "Rinse skin with water [or shower]."
+  },
+  {
+    "code": "P360",
+    "phrase": "Rinse immediately contaminated clothing and skin with plenty of water before removing clothes."
+  },
+  {
+    "code": "P361",
+    "phrase": "Take off immediately all contaminated clothing."
+  },
+  {
+    "code": "P362",
+    "phrase": "Take off contaminated clothing."
+  },
+  {
+    "code": "P363",
+    "phrase": "Wash contaminated clothing before reuse."
+  },
+  {
+    "code": "P364",
+    "phrase": "And wash it before reuse.[Added in 2015 version]"
+  },
+  {
+    "code": "P370",
+    "phrase": "In case of fire:"
+  },
+  {
+    "code": "P371",
+    "phrase": "In case of major fire and large quantities:"
+  },
+  {
+    "code": "P372",
+    "phrase": "Explosion risk."
+  },
+  {
+    "code": "P373",
+    "phrase": "DO NOT fight fire when fire reaches explosives."
+  },
+  {
+    "code": "P374",
+    "phrase": "Fight fire with normal precautions from a reasonable distance."
+  },
+  {
+    "code": "P376",
+    "phrase": "Stop leak if safe to do so."
+  },
+  {
+    "code": "P377",
+    "phrase": "Leaking gas fire: Do not extinguish, unless leak can be stopped safely."
+  },
+  {
+    "code": "P378",
+    "phrase": "Use ... to extinguish."
+  },
+  {
+    "code": "P380",
+    "phrase": "Evacuate area."
+  },
+  {
+    "code": "P381",
+    "phrase": "In case of leakage, eliminate all ignition sources."
+  },
+  {
+    "code": "P390",
+    "phrase": "Absorb spillage to prevent material damage."
+  },
+  {
+    "code": "P391",
+    "phrase": "Collect spillage."
+  },
+  {
+    "code": "P301+P310",
+    "phrase": "IF SWALLOWED: Immediately call a POISON CENTER/doctor/..."
+  },
+  {
+    "code": "P301+P312",
+    "phrase": "IF SWALLOWED: call a POISON CENTER/doctor/... IF you feel unwell."
+  },
+  {
+    "code": "P301+P330+P331",
+    "phrase": "IF SWALLOWED: Rinse mouth. Do NOT induce vomiting."
+  },
+  {
+    "code": "P302+P334",
+    "phrase": "IF ON SKIN: Immerse in cool water [or wrap in wet bandages]."
+  },
+  {
+    "code": "P302+P335+P334",
+    "phrase": "Brush off loose particles from skin. Immerse in cool water [or wrap in wet bandages]."
+  },
+  {
+    "code": "P302+P350",
+    "phrase": "IF ON SKIN: Gently wash with plenty of soap and water."
+  },
+  {
+    "code": "P302+P352",
+    "phrase": "IF ON SKIN: wash with plenty of water."
+  },
+  {
+    "code": "P303+P361+P353",
+    "phrase": "IF ON SKIN (or hair): Take off Immediately all contaminated clothing. Rinse SKIN with water [or shower]."
+  },
+  {
+    "code": "P304+P312",
+    "phrase": "IF INHALED: Call a POISON CENTER/doctor/... if you feel unwell."
+  },
+  {
+    "code": "P304+P340",
+    "phrase": "IF INHALED: Remove person to fresh air and keep comfortable for breathing."
+  },
+  {
+    "code": "P304+P341",
+    "phrase": "IF INHALED: If breathing is difficult, remove victim to fresh air and keep at rest in a position comfortable for breathing."
+  },
+  {
+    "code": "P305+P351+P338",
+    "phrase": "IF IN EYES: Rinse cautiously with water for several minutes. Remove contact lenses if present and easy to do - continue rinsing."
+  },
+  {
+    "code": "P306+P360",
+    "phrase": "IF ON CLOTHING: Rinse Immediately contaminated CLOTHING and SKIN with plenty of water before removing clothes."
+  },
+  {
+    "code": "P307+P311",
+    "phrase": "IF exposed: call a POISON CENTER or doctor/physician."
+  },
+  {
+    "code": "P308+P311",
+    "phrase": "IF exposed or concerned: Call a POISON CENTER/doctor/..."
+  },
+  {
+    "code": "P308+P313",
+    "phrase": "IF exposed or concerned: Get medical advice/attention."
+  },
+  {
+    "code": "P309+P311",
+    "phrase": "IF exposed or if you feel unwell: call a POISON CENTER or doctor/physician."
+  },
+  {
+    "code": "P332+P313",
+    "phrase": "IF SKIN irritation occurs: Get medical advice/attention."
+  },
+  {
+    "code": "P333+P313",
+    "phrase": "IF SKIN irritation or rash occurs: Get medical advice/attention."
+  },
+  {
+    "code": "P335+P334",
+    "phrase": "Brush off loose particles from skin. Immerse in cool water/wrap in wet bandages."
+  },
+  {
+    "code": "P337+P313",
+    "phrase": "IF eye irritation persists: Get medical advice/attention."
+  },
+  {
+    "code": "P342+P311",
+    "phrase": "IF experiencing respiratory symptoms: Call a POISON CENTER/doctor/..."
+  },
+  {
+    "code": "P361+P364",
+    "phrase": "Take off immediately all contaminated clothing and wash it before reuse."
+  },
+  {
+    "code": "P362+P364",
+    "phrase": "Take off contaminated clothing and wash it before reuse."
+  },
+  {
+    "code": "P370+P376",
+    "phrase": "in case of fire: Stop leak if safe to do so."
+  },
+  {
+    "code": "P370+P378",
+    "phrase": "In case of fire: Use ... to extinguish."
+  },
+  {
+    "code": "P370+P380",
+    "phrase": "In case of fire: Evacuate area."
+  },
+  {
+    "code": "P370+P380+P375",
+    "phrase": "In case of fire: Evacuate area. Fight fire remotely due to the risk of explosion."
+  },
+  {
+    "code": "P371+P380+P375",
+    "phrase": "In case of major fire and large quantities: Evacuate area. Fight fire remotely due to the risk of explosion."
+  },
+  {
+    "code": "P401",
+    "phrase": "Store in accordance with ..."
+  },
+  {
+    "code": "P402",
+    "phrase": "Store in a dry place."
+  },
+  {
+    "code": "P403",
+    "phrase": "Store in a well-ventilated place."
+  },
+  {
+    "code": "P404",
+    "phrase": "Store in a closed container."
+  },
+  {
+    "code": "P405",
+    "phrase": "Store locked up."
+  },
+  {
+    "code": "P406",
+    "phrase": "Store in corrosive resistant/... container with a resistant inner liner."
+  },
+  {
+    "code": "P407",
+    "phrase": "Maintain air gap between stacks or pallets."
+  },
+  {
+    "code": "P410",
+    "phrase": "Protect from sunlight."
+  },
+  {
+    "code": "P411",
+    "phrase": "Store at temperatures not exceeding ... °C/...°F."
+  },
+  {
+    "code": "P412",
+    "phrase": "Do not expose to temperatures exceeding 50 °C/ 122 °F."
+  },
+  {
+    "code": "P413",
+    "phrase": "Store bulk masses greater than ... kg/...lbs at temperatures not exceeding ... °C/...°F."
+  },
+  {
+    "code": "P420",
+    "phrase": "Store separately."
+  },
+  {
+    "code": "P422",
+    "phrase": "Store contents under ..."
+  },
+  {
+    "code": "P402+P404",
+    "phrase": "Store in a dry place. Store in a closed container."
+  },
+  {
+    "code": "P403+P233",
+    "phrase": "Store in a well-ventilated place. Keep container tightly closed."
+  },
+  {
+    "code": "P403+P235",
+    "phrase": "Store in a well-ventilated place. Keep cool."
+  },
+  {
+    "code": "P410+P403",
+    "phrase": "Protect from sunlight. Store in a well-ventilated place."
+  },
+  {
+    "code": "P410+P412",
+    "phrase": "Protect from sunlight. Do not expose to temperatures exceeding 50 °C/122°F."
+  },
+  {
+    "code": "P411+P235",
+    "phrase": "Store at temperatures not exceeding ... °C/...°F. Keep cool."
+  },
+  {
+    "code": "P501",
+    "phrase": "Dispose of contents/container to ..."
+  },
+  {
+    "code": "P502",
+    "phrase": "Refer to manufacturer or supplier for information on recovery or recycling"
+  }
+]
