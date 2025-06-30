@@ -13,15 +13,12 @@ from haz_comp_full import *
 # for imported SDS documents
 
 
-# TODO: give option to input cas number (optional), name (optional) - bypass the cas number search, but still complete validation on pubchem
-#       on UI integration, have live status updates of current step
+# TODO: give option to input cas number (optional)
 #       clear UI indicating what cross validation measures passed/failed (including needing OCR), option to approve or deny entries or edit specific entries
-#       OEB3 (AaronChem)
 
-# TODO: fix hazard statemnet reader to include it starting with HXXX
-#       issue with 108-20-3 (reading in other statements)
+# TODO: not reading in section headers in aaronchem SDS
 
-# TODO: CAS # failing tes with 64-19-7 (showing index no. rather than cas)
+# TODO: section 3 does not work (pdf name extractor, may just be irrelevant)
 
 
 # SECTION 1. extract text from PDF with OCR fallback
@@ -230,7 +227,27 @@ def extract_ghs_statements(text, threshold=60):
 
     all_results = []
     
+    hazards, _ = get_pubchem_ghs_phrases()
+
     for phrase in candidates:
+        h_code_match = re.match(r"^(H\d{3})\b", phrase)
+        if len(phrase) > 200:
+                continue  # ignore paragraph-length statements
+        
+        if h_code_match:
+            h_code = h_code_match.group(1)
+            match_entry = next((entry for entry in hazards if entry[0] == h_code), None)
+
+            if match_entry:
+                all_results.append({
+                    "original_text": phrase,
+                    "match_score": 100,
+                    "ghs_code": match_entry[0],
+                    "official_text": match_entry[1],
+                    "category": "Hazard"
+                })
+                continue
+
         matches = match_to_pubchem_ghs(phrase, threshold=threshold)
         if matches:
             best = matches[0]
@@ -369,11 +386,11 @@ def extract_additional_safety_info(text):
     
     # section_5 = extract_section(text,5)
     section_7 = extract_between_sections(text, (7, r"handling\s+and\s+storage"), (8, r"exposure\s+controls\s*/\s*personal\s+protection"))
-    # print("\n\nsection 7 text", section_7)
+    print("\n\nsection 7 text", section_7)
     section_9 = extract_between_sections(text, (9, r"physical\s+and\s+chemical\s+properties"), (10, r"stability\s+and\s+reactivity"))
-    # print("\n\nsection 9 text", section_9)
+    print("\n\nsection 9 text", section_9)
     section_10 = extract_between_sections(text, (10, r"stability\s+and\s+reactivity"), (11, r"toxicological\s+information"))
-    print("\n\nsection 10 text", section_10)
+    # print("\n\nsection 10 text", section_10)
 
     info = {}
 
@@ -417,13 +434,13 @@ def extract_additional_safety_info(text):
 
 
     # SUBSECTION 9C. reactivity information (section 10 SDS)
-    match = re.search(r"(reactivity|reactive\s*hazards?|chemical\s*stability)[:\-]?\s*([^.;\n]+)", section_10, re.IGNORECASE)
-    if match:
-        info["reactivity_info"] = match.group(2).strip()
-    elif re.search(r"(reactivity|reactive\s*hazards?)", section_5, re.IGNORECASE):
-        match = re.search(r"(reactivity|reactive\s*hazards?)[:\-]?\s*([^.;\n]+)", section_5, re.IGNORECASE)
-        if match:
-            info["reactivity_info"] = match.group(2).strip()
+    # match = re.search(r"(reactivity|reactive\s*hazards?|chemical\s*stability)[:\-]?\s*([^.;\n]+)", section_10, re.IGNORECASE)
+    # if match:
+    #     info["reactivity_info"] = match.group(2).strip()
+    # elif re.search(r"(reactivity|reactive\s*hazards?)", section_5, re.IGNORECASE):
+    #     match = re.search(r"(reactivity|reactive\s*hazards?)[:\-]?\s*([^.;\n]+)", section_5, re.IGNORECASE)
+    #     if match:
+    #         info["reactivity_info"] = match.group(2).strip()
 
     return info
 
