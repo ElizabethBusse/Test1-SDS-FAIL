@@ -219,80 +219,34 @@ def extract_ghs_statements(text, threshold=60):
 
     # heuristically split into candidate phrases
     raw_section = " ".join(section_lines)
-    # Narrow to after "Hazard Statements"
-    hazard_start = re.search(r"hazard\s*statements[:\-]?", raw_section, re.IGNORECASE)
-    if hazard_start:
-        raw_section = raw_section[hazard_start.end():]
-    # print(raw_section)
     # candidates = re.split(r"[.;•●\n]", raw_section)
     # candidates = [c.strip() for c in candidates if len(c.strip()) > 8]
 
-    candidates = re.findall(r"(H\d{3}(?:\s*(?:\+|,|/)\s*H\d{3})*)(?:\s*[:-]?\s*)?(.*?)(?=[.;\n]|$)", raw_section)
-    print("candidates", candidates)
-
-    def split_combined_hazard_statements(hazard_entries):
-        """
-        Takes a list of tuples (starting H-code, full hazard string),
-        and returns a list of individual (H-code, description) pairs.
-        """
-        split_results = []
-
-        for first_hcode, full_text in hazard_entries:
-            pattern = re.compile(r"(H\d{3}(?:\s*\+\s*H\d{3})*)\s+(.*?)(?=\s+H\d{3}|\s+P\d{3}|$)")
-            matches = pattern.findall(full_text)
-
-            # If first code (e.g. H302) wasn't in the matches, prepend it
-            if matches:
-                first_found_code = matches[0][0]
-                if first_hcode not in first_found_code:
-                    # Extract up to the first matched H-code from text
-                    preamble = full_text.split(first_found_code)[0].strip()
-                    first_desc = preamble
-                    if first_desc:  # Only add if there is actual description
-                        split_results.append((first_hcode, first_desc))
-
-            for h_code, desc in matches:
-                cleaned_desc = desc.strip().rstrip(".;")
-                split_results.append((h_code.strip(), cleaned_desc))
-
-        return split_results
-    
-    split_candidates = split_combined_hazard_statements(candidates)
-
-    print("split", split_candidates)
-
-    # FIXME START
-    # preserves the Hxxx + Hxxx (68-12-2); loses single line H...H...
-    candidates = [f"{codes.strip()} {desc.strip()}".strip() for codes, desc in candidates]
-
-    # allows to read AaronChem (single line of Hxxx..... Hxxx....)(123027-99-6); loses H + H
-    # candidates = [f"{codes.strip()} {desc.strip()}".strip() for codes, desc in split_candidates]
-    # FIXME END
+    candidates = re.findall(r"\bH\d{3}\b.*?(?=[.;\n]|$)", raw_section)
+    candidates = [c.strip() for c in candidates]
 
     all_results = []
     
     hazards, _ = get_pubchem_ghs_phrases()
 
     for phrase in candidates:
-        print("phrase", phrase)
-        h_code_match = re.match(r"^(H\d{3}(?:\s*(?:\+|,|/)\s*H\d{3})*)\b", phrase)
+        h_code_match = re.match(r"^(H\d{3})\b", phrase)
         if len(phrase) > 200:
-                print('ran')
                 continue  # ignore paragraph-length statements
         
-        if h_code_match:
-            h_code = h_code_match.group(1)
-            match_entry = next((entry for entry in hazards if entry[0] == h_code), None)
+        # if h_code_match:
+        #     h_code = h_code_match.group(1)
+        #     match_entry = next((entry for entry in hazards if entry[0] == h_code), None)
 
-            if match_entry:
-                all_results.append({
-                    "original_text": phrase,
-                    "match_score": 100,
-                    "ghs_code": match_entry[0],
-                    "official_text": match_entry[1],
-                    "category": "Hazard"
-                })
-                continue
+        #     if match_entry:
+        #         all_results.append({
+        #             "original_text": phrase,
+        #             "match_score": 100,
+        #             "ghs_code": match_entry[0],
+        #             "official_text": match_entry[1],
+        #             "category": "Hazard"
+        #         })
+        #         continue
 
         matches = match_to_pubchem_ghs(phrase, threshold=threshold)
         if matches:
