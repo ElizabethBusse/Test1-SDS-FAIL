@@ -55,16 +55,17 @@ def is_valid_cas(cas):
     digits = ''.join(parts[:-1])
     check_digit = int(parts[-1])
 
-    print("check digit", check_digit)
+    # print("check digit", check_digit)
 
     total = sum(int(num) * (i + 1) for i, num in enumerate(reversed(digits)))
     valid = total % 10 == check_digit
-    print("valid cas = ", valid)
+    # print("valid cas = ", valid)
     return valid
 
 def extract_all_cas_numbers(text):
     cas_label_pattern = r"(?:\bCAS[-\s]?No\.?|\bCAS\b)" # looks for any version of CAS, CAS-NO, ETC., but not CAS[A-Z] (followed by some other letter)
-    cas_number_pattern = r"\b\d{2,7}-\d{2}-\d\b" # 2-7 digits, 2 digits, 1 digit (CAS NO. FORMAT)
+    cas_number_pattern = r"(?<![\d-])\d{2,7}-\d{2}-\d(?![\d-])"
+    # cas_number_pattern = r"\b\d{2,7}-\d{2}-\d\b" # 2-7 digits, 2 digits, 1 digit (CAS NO. FORMAT)
     lines = text.splitlines()
 
     high_conf_matches = set()
@@ -221,8 +222,11 @@ def extract_ghs_statements(text, threshold=60):
 
     # heuristically split into candidate phrases
     raw_section = " ".join(section_lines)
-    candidates = re.split(r"[.;•●\n]", raw_section)
-    candidates = [c.strip() for c in candidates if len(c.strip()) > 8]
+    # candidates = re.split(r"[.;•●\n]", raw_section)
+    # candidates = [c.strip() for c in candidates if len(c.strip()) > 8]
+
+    candidates = re.findall(r"\bH\d{3}\b.*?(?=[.;\n]|$)", raw_section)
+    candidates = [c.strip() for c in candidates]
 
     all_results = []
     
@@ -351,7 +355,17 @@ def extract_additional_safety_info(text):
                     break
                 section_lines.append(line.strip())
 
-        return "\n".join(section_lines)
+        section_text = "\n".join(section_lines)
+
+        # remove footers
+        section_text = re.sub(
+            r"SIGALD\s*-\s*\d+\s*[\r\n]+\s*Page\s*\d+\s*of\s*\d+\s*[\r\n]+.*?MilliporeSigma\s+in\s+the\s+US\s+and\s+Canada",
+            "",
+            section_text,
+            flags=re.IGNORECASE | re.DOTALL
+        )
+
+        return section_text
     
     # section_5 = extract_section(text,5)
     section_7 = extract_between_sections(text, (7, r"handling\s+and\s+storage"), (8, r"exposure\s+controls\s*/\s*personal\s+protection"))
