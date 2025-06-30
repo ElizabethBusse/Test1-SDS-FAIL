@@ -2,7 +2,7 @@ import os
 import json
 import tkinter as tk
 from tkinter import filedialog
-from parser import parse_sds_file
+from parser import *
 
 root = tk.Tk()
 root.withdraw()

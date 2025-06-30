@@ -18,6 +18,11 @@ from haz_comp_full import *
 #       clear UI indicating what cross validation measures passed/failed (including needing OCR), option to approve or deny entries or edit specific entries
 #       OEB3 (AaronChem)
 
+# TODO: fix hazard statemnet reader to include it starting with HXXX
+#       issue with 108-20-3 (reading in other statements)
+
+# TODO: CAS # failing tes with 64-19-7 (showing index no. rather than cas)
+
 
 # SECTION 1. extract text from PDF with OCR fallback
 def extract_text_from_pdf(pdf_path):
@@ -49,6 +54,8 @@ def is_valid_cas(cas):
     parts = cas.split('-')
     digits = ''.join(parts[:-1])
     check_digit = int(parts[-1])
+
+    print("check digit", check_digit)
 
     total = sum(int(num) * (i + 1) for i, num in enumerate(reversed(digits)))
     valid = total % 10 == check_digit
@@ -321,27 +328,38 @@ def compare_ghs_source(extracted_matches, pubhcem_h_statements):
 
 # SECTION 9. flash point, storage condition, reactivity info
 def extract_additional_safety_info(text):
-    def extract_section(text, section_number):
+    def extract_between_sections(text, start_section, end_section):
+        """
+        extract all text between two specified section headers
+        start_section = [section] 7. title
+        end_section = [section] 8. title
+        """
+
         lines = text.splitlines()
-        section_lines = []
+        start_pattern = rf"(section\s*)?{start_section[0]}[\.:]?\s*{start_section[1]}"
+        end_pattern = rf"(section\s*)?{end_section[0]}[\.:]?\s*{end_section[1]}"
+
         inside = False
-        next_section_pattern = rf"section\s*{section_number + 1}[\.:]?"
+        section_lines = []
 
         for line in lines:
-            if re.search(rf"section\s*{section_number}[\.:]?", line, re.IGNORECASE):
+            if not inside and re.search(start_pattern, line, re.IGNORECASE):
                 inside = True
-            elif inside and re.search(next_section_pattern, line, re.IGNORECASE):
-                break
-            elif inside:
+                continue
+            if inside:
+                if re.search(end_pattern, line, re.IGNORECASE):
+                    break
                 section_lines.append(line.strip())
 
-        return " ".join(section_lines)
+        return "\n".join(section_lines)
     
-    section_5 = extract_section(text,5)
-    section_7 = extract_section(text,7)
-    # print("section 7 text", section_7)
-    section_9 = extract_section(text,9)
-    section_10 = extract_section(text,10)
+    # section_5 = extract_section(text,5)
+    section_7 = extract_between_sections(text, (7, r"handling\s+and\s+storage"), (8, r"exposure\s+controls\s*/\s*personal\s+protection"))
+    # print("\n\nsection 7 text", section_7)
+    section_9 = extract_between_sections(text, (9, r"physical\s+and\s+chemical\s+properties"), (10, r"stability\s+and\s+reactivity"))
+    # print("\n\nsection 9 text", section_9)
+    section_10 = extract_between_sections(text, (10, r"stability\s+and\s+reactivity"), (11, r"toxicological\s+information"))
+    print("\n\nsection 10 text", section_10)
 
     info = {}
 
@@ -373,14 +391,15 @@ def extract_additional_safety_info(text):
 
 
     # SUBSECTION 9B. storage conditions (section 7 SDS)
-    storage_match = re.search(
-        r"(?:storage\s*(?:conditions|requirements|information)?[^:\n]*[:\-]?\s*)(.*?)(?=\n\s*\S|\Z)",
+    # Extract between "storage conditions" and "storage class" within section 7
+    storage_between_match = re.search(
+        r"storage\s*conditions\s*[:\-]?\s*(.*?)(?=\bstorage\s*class\b)",
         section_7,
         re.IGNORECASE | re.DOTALL
     )
-    if storage_match:
-        info["storage_conditions"] = storage_match.group(1).strip().replace('\n', ' ')
-        print("found storage condition match")
+    if storage_between_match:
+        info["storage_conditions"] = storage_between_match.group(1).strip().replace('\n', ' ')
+        # print("found storage condition match")
 
 
     # SUBSECTION 9C. reactivity information (section 10 SDS)
