@@ -156,6 +156,7 @@ def extract_product_name(text):
 # SECTION 4. validate CAS against *PubChem* chemical name
 @lru_cache(maxsize=128) # cache previously searched CAS no.
 def get_pubchem_name(cas):
+    # print("test name cache")
     url = f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/xref/rn/{cas}/JSON" # PUG REST API standard url for CAS no. lookup
     try:
         response = requests.get(url, timeout=5)
