@@ -16,8 +16,6 @@ from haz_comp_full import *
 # TODO: give option to input cas number (optional)
 #       clear UI indicating what cross validation measures passed/failed (including needing OCR), option to approve or deny entries or edit specific entries
 
-# TODO: not reading in section headers in aaronchem SDS
-
 # TODO: section 3 does not work (pdf name extractor, may just be irrelevant)
 
 
@@ -228,7 +226,7 @@ def extract_ghs_statements(text, threshold=60):
     # candidates = [c.strip() for c in candidates if len(c.strip()) > 8]
 
     candidates = re.findall(r"(H\d{3}(?:\s*(?:\+|,|/)\s*H\d{3})*)(?:\s*[:-]?\s*)?(.*?)(?=[.;\n]|$)", raw_section)
-    print("candidates", candidates)
+    # print("candidates", candidates)
 
     def split_combined_hazard_statements(hazard_entries):
         """
@@ -259,22 +257,30 @@ def extract_ghs_statements(text, threshold=60):
     
     split_candidates = split_combined_hazard_statements(candidates)
 
-    print("split", split_candidates)
+    # print("split", split_candidates)
 
     # FIXME START
     # preserves the Hxxx + Hxxx (68-12-2); loses single line H...H...
-    candidates = [f"{codes.strip()} {desc.strip()}".strip() for codes, desc in candidates]
+    # candidates = [f"{codes.strip()} {desc.strip()}".strip() for codes, desc in candidates]
 
     # allows to read AaronChem (single line of Hxxx..... Hxxx....)(123027-99-6); loses H + H
     # candidates = [f"{codes.strip()} {desc.strip()}".strip() for codes, desc in split_candidates]
     # FIXME END
+
+
+    if split_candidates == []:
+        candidates = [f"{codes.strip()} {desc.strip()}".strip() for codes, desc in candidates]
+    else:
+        candidates = [f"{codes.strip()} {desc.strip()}".strip() for codes, desc in split_candidates]
+
+
 
     all_results = []
     
     hazards, _ = get_pubchem_ghs_phrases()
 
     for phrase in candidates:
-        print("phrase", phrase)
+        # print("phrase", phrase)
         h_code_match = re.match(r"^(H\d{3}(?:\s*(?:\+|,|/)\s*H\d{3})*)\b", phrase)
         if len(phrase) > 200:
                 print('ran')
@@ -437,20 +443,20 @@ def extract_additional_safety_info(text):
     section_9 = extract_between_sections(text, (9, r"physical\s+and\s+chemical\s+properties"), (10, r"stability\s+and\s+reactivity"))
     # print("\n\nsection 9 text", section_9)
     section_10 = extract_between_sections(text, (10, r"stability\s+and\s+reactivity"), (11, r"toxicological\s+information"))
-    # print("\n\nsection 10 text", section_10)
+    print("\n\nsection 10 text", section_10)
 
     info = {}
 
 
     # SUBSECTION 9A. flash point (section 9 SDS)
     flash_point_match = re.search(r"flash\s*point[:\s\-]*([^\n]+)", section_9, re.IGNORECASE)
-    print(flash_point_match)
+    # print(flash_point_match)
 
     def truncate_after_temp_units(s):
         match = re.search(r"(.*?°[CF])", s)
         return match.group(1).strip() if match else s.strip()
 
-    if re.search(r"no\s+data\s+available|not\s+determined|n/?a|unknown", raw_flash_line, re.IGNORECASE):
+    if re.search(r"no\s+data\s+available|not\s+applicable|n/?a|unknown", flash_point_match.group(0), re.IGNORECASE):
         info["flash_point"] = "Not available"
     else:
         raw_flash_line = flash_point_match.group(0).strip()
@@ -472,14 +478,18 @@ def extract_additional_safety_info(text):
 
     # SUBSECTION 9B. storage conditions (section 7 SDS)
     # Extract between "storage conditions" and "storage class" within section 7
-    storage_between_match = re.search(
-        r"storage\s*conditions\s*[:\-]?\s*(.*?)(?=\bstorage\s*class\b)",
-        section_7,
-        re.IGNORECASE | re.DOTALL
-    )
+    storage_between_match = re.search(r"storage\s*conditions\s*[:\-]?\s*(.*?)(?=\bstorage\s*class\b)", section_7, re.IGNORECASE | re.DOTALL)
     if storage_between_match:
         info["storage_conditions"] = storage_between_match.group(1).strip().replace('\n', ' ')
-        # print("found storage condition match")
+    else:
+        # Search for text between "conditions for safe storage, including any incompatibilities" and "specific end use(s)"
+        storage_between_match = re.search(
+        r"conditions\s*for\s*safe\s*storage,\s*including\s*any\s*incompatibilities\s*[:\-]?\s*\n*(.*?)(?=\bspecific\s*end\s*use\(s\))",
+        section_7,
+        re.IGNORECASE | re.DOTALL
+        )
+        if storage_between_match:
+            info["storage_conditions"] = storage_between_match.group(1).strip().replace('\n', ' ')
 
 
     # SUBSECTION 9C. reactivity information (section 10 SDS)
