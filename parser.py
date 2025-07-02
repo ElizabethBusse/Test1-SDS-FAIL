@@ -15,8 +15,13 @@ from haz_comp_full import *
 
 # TODO: give option to input cas number (optional)
 #       clear UI indicating what cross validation measures passed/failed (including needing OCR), option to approve or deny entries or edit specific entries
+#       in cas number search -> if no SDS found on SA or AC, then allow single file upload
 
 # TODO: section 3 does not work (pdf name extractor, may just be irrelevant)
+#       show synonyms under chenical name on UI
+
+# TODO: fails when no wifi (pubchem lookup fails)
+#       indicate no pubchem ref + error
 
 
 # SECTION 1. extract text from PDF with OCR fallback
@@ -259,15 +264,6 @@ def extract_ghs_statements(text, threshold=60):
     split_candidates = split_combined_hazard_statements(candidates)
 
     # print("split", split_candidates)
-
-    # FIXME START
-    # preserves the Hxxx + Hxxx (68-12-2); loses single line H...H...
-    # candidates = [f"{codes.strip()} {desc.strip()}".strip() for codes, desc in candidates]
-
-    # allows to read AaronChem (single line of Hxxx..... Hxxx....)(123027-99-6); loses H + H
-    # candidates = [f"{codes.strip()} {desc.strip()}".strip() for codes, desc in split_candidates]
-    # FIXME END
-
 
     if split_candidates == []:
         candidates = [f"{codes.strip()} {desc.strip()}".strip() for codes, desc in candidates]

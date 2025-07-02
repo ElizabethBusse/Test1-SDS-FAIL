@@ -7,7 +7,7 @@ from rapidfuzz import fuzz
 @lru_cache(maxsize=1)
 def get_pubchem_ghs_phrases():
     """
-    Scrape PubChem’s GHS page for hazard and precautionary statements.
+    Scrape PubChem's GHS page for hazard and precautionary statements.
     Returns two lists of (code, statement) tuples.
     """
     url = "https://pubchem.ncbi.nlm.nih.gov/ghs/#_prec"
