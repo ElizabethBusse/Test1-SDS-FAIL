@@ -4,6 +4,8 @@ import tkinter as tk
 from tkinter import filedialog
 from parser import *
 
+# tests SDS upload
+
 root = tk.Tk()
 root.withdraw()
 

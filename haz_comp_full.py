@@ -4,6 +4,8 @@ from bs4 import BeautifulSoup
 from functools import lru_cache
 from rapidfuzz import fuzz
 
+# hazard statement matching
+
 @lru_cache(maxsize=1)
 def get_pubchem_ghs_phrases():
     """

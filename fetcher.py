@@ -1,6 +1,13 @@
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import time
+
 import os
-import glob
-import requests
+
+# for cas number lookup
 
 # TODO: headless download not working
 #       user prompt for directory save location
@@ -10,13 +17,6 @@ import requests
 #       figure out how to access this file to be used in parser.py (rename to cas number)
 
 def fetch_sds_sigma_aldrich(cas_number, download_dir=None):
-    from selenium import webdriver
-    from selenium.webdriver.chrome.options import Options
-    from selenium.webdriver.common.by import By
-    from selenium.webdriver.support.ui import WebDriverWait
-    from selenium.webdriver.support import expected_conditions as EC
-    import time
-
     options = Options()
     prefs = {
         "download.default_directory": download_dir or "/tmp",
@@ -26,15 +26,18 @@ def fetch_sds_sigma_aldrich(cas_number, download_dir=None):
         "plugins.always_open_pdf_externally": True
     }
     options.add_experimental_option("prefs", prefs)
-    # options.add_argument("--headless=new")  # Remove if you want to see browser
+    options.add_argument("--headless")  # Remove if you want to see browser
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-gpu")
+
 
     driver = webdriver.Chrome(options=options)
 
     try:
-
+        print("🌐 Navigating to Sigma-Aldrich...")
         driver.get("https://www.sigmaaldrich.com")
+        driver.save_screenshot("debug_headless.png")
+        print("📸 Saved screenshot of homepage.")
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "header-search-search-wrapper-input")))
 
         # Type CAS and press Enter
@@ -62,9 +65,15 @@ def fetch_sds_sigma_aldrich(cas_number, download_dir=None):
         link = driver.find_element(By.XPATH, "//a[@id='sds-link-EN']")
         link.click()
 
+        while len(driver.window_handles) > 1: # if there are more than 1 tab
+            time.sleep(5) # wait for download to finish or add a function that ensure the file is downloaded
+            driver.switch_to.window(driver.window_handles[1])
+            driver.close()
+            driver.switch_to.window(driver.window_handles[0])
+
         # Wait for download to finish
         download_wait_time = 15  # seconds
-        download_poll_interval = 2
+        download_poll_interval = 3
 
         for _ in range(int(download_wait_time / download_poll_interval)):
             time.sleep(download_poll_interval)
