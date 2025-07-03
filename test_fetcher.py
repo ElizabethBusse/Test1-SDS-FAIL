@@ -2,6 +2,8 @@ from fetcher_firefox import *
 
 # tests cas number lookup
 
+# TODO: store which website it got the info from to use in final UI
+
 def test_fetch_cas(cas_number):
     print(f"\n\nTesting CAS: {cas_number}")
     success = fetch_sds_sigma_aldrich(cas_number, selected_dir)

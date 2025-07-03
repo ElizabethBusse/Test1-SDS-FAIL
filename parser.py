@@ -18,6 +18,7 @@ from haz_comp_full import *
 #       clear UI indicating what cross validation measures passed/failed (including needing OCR), option to approve or deny entries or edit specific entries
 #       in cas number search -> if no SDS found on SA or AC, then allow single file upload
 #       cas # repeat handling
+#       choose directory single time, every other time need to reference this
 
 # TODO: section 3 does not work (pdf name extractor, may just be irrelevant)
 #       show synonyms under chenical name on UI
@@ -201,9 +202,12 @@ def extract_best_guess_cas(text):
     chemical_name_in_doc = extract_product_name(text).lower()
 
     for cas in cas_candidates:
-        pubchem_names = get_pubchem_name(cas)
-        if pubchem_names and chemical_name_in_doc in pubchem_names:
-            return {"cas": cas, "validated": True}
+        try:
+            pubchem_names = get_pubchem_name(cas)
+            if pubchem_names and chemical_name_in_doc in pubchem_names:
+                return {"cas": cas, "validated": True}
+        except Exception as e:
+            print(f"PubChem name validation failed for CAS {cas}: {e}")
         
     return {"cas": cas_candidates[0] if cas_candidates else None, "validated": False}
 
@@ -425,7 +429,7 @@ def extract_between_sections(text, start_section, end_section):
 
         # remove footers
         section_text = re.sub(
-            r"SIGALD\s*-\s*\d+\s*[\r\n]+\s*Page\s*\d+\s*of\s*\d+\s*[\r\n]+.*?MilliporeSigma\s+in\s+the\s+US\s+and\s+Canada",
+            r"(?:SIGALD|Aldrich)\s*-\s*\d+\s*[\r\n]+\s*Page\s*\d+\s*of\s*\d+\s*[\r\n]+.*?MilliporeSigma\s+in\s+the\s+US\s+and\s+Canada",
             "",
             section_text,
             flags=re.IGNORECASE | re.DOTALL
@@ -442,6 +446,8 @@ def extract_additional_safety_info(text):
     section_9 = extract_between_sections(text, (9, r"physical\s+and\s+chemical\s+properties"), (10, r"stability\s+and\s+reactivity"))
     # print("\n\nsection 9 text", section_9)
     section_10 = extract_between_sections(text, (10, r"stability\s+and\s+reactivity"), (11, r"toxicological\s+information"))
+    # Normalize excessive empty lines to single empty line
+    section_10 = re.sub(r'\n\s*\n+', '\n\n', section_10)
     print("\n\nsection 10 text", section_10)
 
     info = {}
@@ -535,9 +541,12 @@ def parse_sds_file(filepath):
         result["ghs_from_sds"] = ghs_from_sds
 
         if cas_info["cas"]:
-            pubchem_ghs = get_pubchem_ghs_by_cas(cas_info["cas"])
-            result["ghs_from_pubchem"] = pubchem_ghs
-            result["comparison"] = compare_ghs_source(ghs_from_sds, pubchem_ghs)
+            try:
+                pubchem_ghs = get_pubchem_ghs_by_cas(cas_info["cas"])
+                result["ghs_from_pubchem"] = pubchem_ghs
+                result["comparison"] = compare_ghs_source(ghs_from_sds, pubchem_ghs)
+            except Exception as e:
+                result["notes"].append(f"PubChem GHS lookup failed for CAS {cas_info['cas']}: {e}")
         else:
             result["notes"].append("No CAS number found; skipping PubChem GHS lookup")
 

@@ -28,11 +28,10 @@ options.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/pd
 options.set_preference("pdfjs.disabled", True)
 options.set_preference("browser.download.manager.showWhenStarting", False)
 
-driver = webdriver.Firefox(options=options)
-
 
 def fetch_sds_sigma_aldrich(cas_number, download_dir=None):
     try:
+        driver = webdriver.Firefox(options=options)
         print("Navigating to Sigma-Aldrich...")
         driver.get("https://www.sigmaaldrich.com")
         WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "header-search-search-wrapper-input")))
