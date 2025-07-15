@@ -17,11 +17,12 @@ from haz_comp_full import *
 # TODO: give option to input cas number (alongside SDS upload) [separate from cas number lookup]
 #       clear UI indicating what cross validation measures passed/failed (including needing OCR), option to approve or deny entries or edit specific entries
 #       in cas number search -> if no SDS found on SA or AC, then allow single file upload
-#       cas # repeat handling
+#       cas # repeat handling (take input and put it through set)
 #       choose directory single time, every other time need to reference this
+#       synonym repeat fix
 
 # TODO: section 3 does not work (pdf name extractor, may just be irrelevant)
-#       show synonyms under chenical name on UI
+#       show synonyms under chemical name on UI
 
 # TODO: fails when no wifi (pubchem lookup fails)
 #       indicate no pubchem ref + error
@@ -186,6 +187,7 @@ def get_pubchem_name(cas):
             if urn.get('label') == "IUPAC Name":
                 iupac_names.append(prop['value']['sval'].strip().lower())
         print("found iupac name:", iupac_names)
+        iupac_names = list(dict.fromkeys(iupac_names))
         return iupac_names if iupac_names else None
     
     except Exception as e:
@@ -364,7 +366,7 @@ def get_pubchem_ghs_by_cas(cas):
 
         find_ghs_hazard_statements(sections)
         # print(ghs_statements)
-        return ghs_statements
+        return ghs_statements, cid
 
     except Exception as e:
         print(f"Failed to fetch PubChem GHS from CAS: {e}")
@@ -451,6 +453,7 @@ def extract_additional_safety_info(text):
     print("\n\nsection 10 text", section_10)
 
     info = {}
+    info["reactivity"] = section_10
 
 
     # SUBSECTION 9A. flash point (section 9 SDS)
@@ -497,14 +500,23 @@ def extract_additional_safety_info(text):
             info["storage_conditions"] = storage_between_match.group(1).strip().replace('\n', ' ')
 
 
-    # SUBSECTION 9C. reactivity information (section 10 SDS)
-    # match = re.search(r"(reactivity|reactive\s*hazards?|chemical\s*stability)[:\-]?\s*([^.;\n]+)", section_10, re.IGNORECASE)
-    # if match:
-    #     info["reactivity_info"] = match.group(2).strip()
-    # elif re.search(r"(reactivity|reactive\s*hazards?)", section_5, re.IGNORECASE):
-    #     match = re.search(r"(reactivity|reactive\s*hazards?)[:\-]?\s*([^.;\n]+)", section_5, re.IGNORECASE)
-    #     if match:
-    #         info["reactivity_info"] = match.group(2).strip()
+    # SUBSECTION 9C. appearance and odor (section 9 SDS
+    # Extract 'appearance'
+    appearance_match = re.search(
+        r"(?i)\bappearance\s*[:\-]?\s*(.*?)(?=\n\s*(?:[a-zA-Z0-9]+\)|odou?r|pH|boiling|melting|flash|freezing))",
+        section_9,
+        re.IGNORECASE | re.DOTALL
+    )
+
+    if appearance_match:
+        appearance = appearance_match.group(1).strip().replace('\n', ' ')
+        appearance = re.sub(r'^[\s/]+', '', appearance)
+        info["appearance"] = appearance
+
+    # Extract 'odor'
+    odor_match = re.search(r"(?i)\bodou?r\s*[:\-]?\s*(.*)", section_9)
+    if odor_match:
+        info["odor"] = odor_match.group(1).strip()
 
     return info
 
@@ -524,9 +536,11 @@ def parse_sds_file(filepath):
         "filepath": filepath,
         "cas_number": None,
         "chemical_name": None,
+        "pubchem_name": None,
         "cas_validated": False,
         "ghs_from_sds": [],
         "ghs_from_pubchem": [],
+        "cid": None,
         "comparison": {},
         "notes": []
     }
@@ -539,12 +553,16 @@ def parse_sds_file(filepath):
         result["cas_validated"] = cas_info["validated"]
         ghs_from_sds = extract_ghs_statements(text)
         result["ghs_from_sds"] = ghs_from_sds
+        pubchem_name = get_pubchem_name(result["cas_number"])
+        result["pubchem_name"] = pubchem_name
 
         if cas_info["cas"]:
             try:
-                pubchem_ghs = get_pubchem_ghs_by_cas(cas_info["cas"])
+                pubchem_ghs, cid = get_pubchem_ghs_by_cas(cas_info["cas"])
+                result["cid"] = cid
                 result["ghs_from_pubchem"] = pubchem_ghs
                 result["comparison"] = compare_ghs_source(ghs_from_sds, pubchem_ghs)
+                result["cas_validated"] = True
             except Exception as e:
                 result["notes"].append(f"PubChem GHS lookup failed for CAS {cas_info['cas']}: {e}")
         else:

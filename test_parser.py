@@ -9,8 +9,8 @@ from parser import *
 def run_parser(filepath):
     results = parse_sds_file(filepath)
 
-    # print("\nSDS Parsing Result:\n")
-    # print(json.dumps(results, indent=2))
+    print("\n\n\n\n\nSDS Parsing Result:\n")
+    print(json.dumps(results, indent=2))
 
     print("\nValid Hazard Matches from SDS:\n")
     valid_ghs = [
@@ -24,6 +24,7 @@ def run_parser(filepath):
         ])
     ]
     print(json.dumps(valid_ghs, indent=2))
+    return results
 
 
 if __name__ == "__main__":
@@ -41,4 +42,4 @@ if __name__ == "__main__":
         exit()
 
     print(f"File selected: {os.path.basename(filepath)}")
-    run_parser(filepath)
+    results = run_parser(filepath)

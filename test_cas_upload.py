@@ -11,11 +11,21 @@ from test_parser import run_parser
 cas_list = ['1245816-10-7', '1015484-22-6', '3734-67-6', '64-19-7']
 # cas_list = ['3734-67-6']
 
-for cas in cas_list:
-    test_fetch_cas(cas)
-    pdf_path = os.path.join(selected_dir, f"{cas}.pdf")
-    if os.path.exists(pdf_path):
-        print(f"Parsing {pdf_path}...")
-        run_parser(pdf_path)
-    else:
-        print(f"SDS file for {cas} not found, skipping parser.")
+def search_by_cas(cas_list):
+    source = []
+    for cas in cas_list:
+        source1 = test_fetch_cas(cas)
+        source.append(source1)
+        print("source", source)
+        pdf_path = os.path.join(selected_dir, f"{cas}.pdf")
+        if os.path.exists(pdf_path):
+            print(f"Parsing {pdf_path}...")
+            results = run_parser(pdf_path)
+        else:
+            print(f"SDS file for {cas} not found, skipping parser.")
+
+    return results, source
+
+if __name__ == "__main__":
+    results, source = search_by_cas(cas_list)
+    print(results, source)
