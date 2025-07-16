@@ -17,6 +17,9 @@ import time
 if 'submitted' not in st.session_state:
     st.session_state.submitted = False
 
+if 'input' not in st.session_state:
+    st.session_state.input = None
+
 if not st.session_state.submitted:
     invalid = False
     if "show_data_editor" not in st.session_state:
