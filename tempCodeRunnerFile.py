@@ -1,1 +1,2 @@
-cas_list = ['1245816-10-7', '1015484-22-6', '3734-67-6', '64-19-7']
+    temp_dir = tempfile.TemporaryDirectory()
+    selected_dir = temp_dir.name

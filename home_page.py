@@ -1,8 +1,7 @@
 import streamlit as st
 import re
 from parser import is_valid_cas
-from streamlit_pdf_conv import sds_upload
-import time
+from streamlit_pdf_conv import sds_upload, cas_reader
 
 # Configure page settings
 # st.set_page_config(
@@ -66,8 +65,8 @@ if not st.session_state.submitted:
             pass
         else:
             print("valid")
-            # if 'inputs' in st.session_state:
-            #     print(st.session_state.inputs)
+            if 'inputs' in st.session_state:
+                print(st.session_state.inputs)
             st.session_state.submitted = True
             st.rerun()
             pass
@@ -161,4 +160,23 @@ if st.session_state.submitted:
 
 
     if 'inputs' in st.session_state:
-        print()
+        print(st.session_state.inputs)
+
+        data_editor_output = st.session_state.inputs
+
+        cas_numbers = []
+
+        for row in data_editor_output['edited_rows'].values():
+            cas = row.get('CAS Number')
+            if cas:
+                cas_numbers.append(cas)
+
+        for row in data_editor_output['added_rows']:
+            cas = row.get('CAS Number')
+            if cas:
+                cas_numbers.append(cas)
+
+        # print(cas_numbers)
+        for cas in cas_numbers:
+            results = cas_reader(cas_numbers)
+            st.write(results)

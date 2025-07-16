@@ -8,12 +8,16 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 import os
 import requests
+import tempfile
 
 # for cas number lookup
 
-root = tk.Tk()
-root.withdraw()
-selected_dir = filedialog.askdirectory(title="Select folder to save SDS files")
+# root = tk.Tk()
+# root.withdraw()
+# selected_dir = filedialog.askdirectory(title="Select folder to save SDS files")
+
+temp_dir = tempfile.TemporaryDirectory()
+selected_dir = temp_dir.name
 
 
 # Setup Firefox options and profile for headless download
@@ -114,10 +118,10 @@ def fetch_sds_aaron_chem(cas_number, download_dir=None):
         print(f"AaronChem Error: {e}")
         return False
 
-if __name__ == "__main__":
-    # fetch_sds_sigma_aldrich('64-19-7', '/Users/sophiezhou/Downloads/purdue/[10] summer 25/evonik/SDS GHS Extractor')
-    if selected_dir:
-        fetch_sds_sigma_aldrich('000-00-0', selected_dir)
-        # fetch_sds_aaron_chem('98327-87-8', selected_dir)
-    else:
-        print("No folder selected. Exiting.")
+# if __name__ == "__main__":
+#     # fetch_sds_sigma_aldrich('64-19-7', '/Users/sophiezhou/Downloads/purdue/[10] summer 25/evonik/SDS GHS Extractor')
+#     if selected_dir:
+#         fetch_sds_sigma_aldrich('000-00-0', selected_dir)
+#         # fetch_sds_aaron_chem('98327-87-8', selected_dir)
+#     else:
+#         print("No folder selected. Exiting.")

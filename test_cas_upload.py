@@ -25,8 +25,8 @@ def search_by_cas(cas_list):
         else:
             print(f"SDS file for {cas} not found, skipping parser.")
 
-    return results, source
+    return results
 
 if __name__ == "__main__":
-    results, source = search_by_cas(cas_list)
-    print(results, source)
+    results = search_by_cas(cas_list)
+    print(results)
