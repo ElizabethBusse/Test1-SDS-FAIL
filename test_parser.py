@@ -1,7 +1,7 @@
 import os
 import json
-import tkinter as tk
-from tkinter import filedialog
+# import tkinter as tk
+# from tkinter import filedialog
 from parser import *
 import inspect
 
@@ -34,19 +34,19 @@ def run_parser(filepath=None, input_val=None, source="PDF Upload"):
     return results
 
 
-if __name__ == "__main__":
-    root = tk.Tk()
-    root.withdraw()
+# if __name__ == "__main__":
+#     root = tk.Tk()
+#     root.withdraw()
 
-    print("Please select an SDS PDF file")
-    filepath = filedialog.askopenfilename(
-        title="Select SDS PDF",
-        filetypes=[("PDF files", "*.pdf")]
-    )
+#     print("Please select an SDS PDF file")
+#     filepath = filedialog.askopenfilename(
+#         title="Select SDS PDF",
+#         filetypes=[("PDF files", "*.pdf")]
+#     )
 
-    if not filepath:
-        print("No file selected. Exiting")
-        exit()
+#     if not filepath:
+#         print("No file selected. Exiting")
+#         exit()
 
-    print(f"File selected: {os.path.basename(filepath)}")
-    results = run_parser(filepath)
+#     print(f"File selected: {os.path.basename(filepath)}")
+#     results = run_parser(filepath)
