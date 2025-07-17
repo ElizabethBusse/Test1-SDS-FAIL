@@ -13,25 +13,25 @@ def sds_upload(pdf_file):
     return results
 
 def cas_reader(cas_list):
-    temp_dir = tempfile.TemporaryDirectory()
-    selected_dir = temp_dir.name
+    # temp_dir = tempfile.TemporaryDirectory()
+    # selected_dir = temp_dir.name
 
-    options = Options()
-    options.add_argument("--headless")
-    options.add_argument("--disable-gpu")
-    options.add_argument("--no-sandbox")
+    # options = Options()
+    # options.add_argument("--headless")
+    # options.add_argument("--disable-gpu")
+    # options.add_argument("--no-sandbox")
 
-    options.set_preference("browser.download.folderList", 2)
-    options.set_preference("browser.download.dir", selected_dir or "/tmp")
-    options.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/pdf")
-    options.set_preference("pdfjs.disabled", True)
-    options.set_preference("browser.download.manager.showWhenStarting", False)
+    # options.set_preference("browser.download.folderList", 2)
+    # options.set_preference("browser.download.dir", selected_dir or "/tmp")
+    # options.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/pdf")
+    # options.set_preference("pdfjs.disabled", True)
+    # options.set_preference("browser.download.manager.showWhenStarting", False)
 
     results = search_by_cas(cas_list)
     return results
 
 if __name__ == "__main__":
     cas_list = ['64-19-7', '1015484-22-6', '000-00-0']
-    temp_dir = tempfile.TemporaryDirectory()
-    selected_dir = temp_dir.name
+    # temp_dir = tempfile.TemporaryDirectory()
+    # selected_dir = temp_dir.name
     search_by_cas(cas_list)

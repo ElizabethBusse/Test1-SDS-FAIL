@@ -9,6 +9,7 @@ import traceback
 import json
 
 from haz_comp_full import *
+from status_fetcher_firefox import fetch_nfpa_cameo, compare_nfpa_results
 
 # for imported SDS documents
 
@@ -574,7 +575,8 @@ def parse_sds_file(filepath=None, input_val=None, source="PDF Upload"):
         "cid": None,
         "comparison": {},
         "notes": [],
-        "source": source
+        "source": source,
+        "nfpa": None
     }
 
     try:
@@ -608,6 +610,15 @@ def parse_sds_file(filepath=None, input_val=None, source="PDF Upload"):
         # for k, v in extra_info.items():
             # print(f"    {k}: {v}")
         result.update(extra_info)
+        
+        if cas_info["cas"]:
+            res = fetch_nfpa_cameo(cas_info["cas"])
+            consensus = compare_nfpa_results(res)
+            print('RANNNNNNNNN 617 PARSER')
+            result["nfpa"] = consensus
+            print("\n\n FINAL: ",consensus)
+        else:
+            print("no cas number found")
 
     except Exception as e:
         result["notes"].append(f"Error processing SDS file: {e}")

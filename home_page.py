@@ -134,6 +134,12 @@ def page_design(results, show_all=False):
 
 
         expander1.divider()
+        nfpa = results.get("nfpa")
+        expander1.write("**NFPA Rating**")
+        expander1.write(nfpa)
+
+
+        expander1.divider()
         flash = results.get("flash_point")
         expander1.write(f"**Flash Point**: {flash}")
 
@@ -154,6 +160,7 @@ def page_design(results, show_all=False):
         reactivity = results.get("reactivity")
         expander1.write("**Reactivity**")
         expander1.write(reactivity)
+
 
         source = results.get("source", "None")
         expander1.caption(f"Source: {source}")

@@ -84,7 +84,7 @@ def fetch_sds_sigma_aldrich(cas_number, download_dir=None):
                 os.rename(latest_pdf, new_path)
                 print(f"Renamed {os.path.basename(latest_pdf)} to {cas_number}.pdf")
             
-            status.update(label="Download completed", state="complete", expanded=False)
+            status.update(label="Download completed from Sigma-Aldrich", state="complete", expanded=False)
 
             return True
 
@@ -112,7 +112,7 @@ def fetch_sds_aaron_chem(cas_number, download_dir=None):
                     for chunk in response.iter_content(chunk_size=8192):
                         f.write(chunk)
                 st.write(f"Downloaded SDS from AaronChem")
-                status.update(label="Download completed", state="complete", expanded=False)
+                status.update(label="Download completed from Aaron Chemicals", state="complete", expanded=False)
                 return True
             else:
                 st.write(f"No SDS found for CAS {cas_number} on AaronChem")
@@ -125,7 +125,7 @@ def fetch_sds_aaron_chem(cas_number, download_dir=None):
 
 
 def fetch_nfpa_cameo(cas_number):
-    with st.status("Searching Cameo Chemicals for NFPA 704...", expanded=True) as status:
+    with st.status(f"Searching Cameo Chemicals for NFPA 704 rating for {cas_number}...", expanded=True) as status:
         try:
             driver = webdriver.Firefox(options=options)
             print("Navigating to Cameo Chemicals...")
@@ -139,7 +139,7 @@ def fetch_nfpa_cameo(cas_number):
             time.sleep(0.5)
             search.send_keys(u'\ue007')
 
-            st.write("Searching for tables...")
+            st.write("Searching for NFPA table...")
             WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'a.pseudo_button[href^="/chemical/"]')))
 
             links = driver.find_elements(By.CSS_SELECTOR, 'a.pseudo_button[href^="/chemical/"]')
@@ -154,7 +154,8 @@ def fetch_nfpa_cameo(cas_number):
                 nfpa_results.append(result)
 
             # print(nfpa_results)
-            return (nfpa_results)
+            status.update(label="NFPA rating search completed", state="complete", expanded=False)
+            return nfpa_results
 
         except Exception as e:
             print(f"Cameo Chemicals Error: {e}")
@@ -163,56 +164,23 @@ def fetch_nfpa_cameo(cas_number):
 
 
 def compare_nfpa_results(results):
-    categories = ["Health", "Flammability", "Instability", "Special"]
+    # Filter out blank/None results
+    filtered = [r for r in results if r and isinstance(r, dict) and r.get('Health')]
 
-    consensus_result = {}
+    if not filtered:
+        return None
 
-    for category in categories:
-        values = []
-        descriptions = []
-        full_entries = []
+    # Compare the filtered results for consensus (ignoring blank)
+    first = filtered[0]
+    consensus = all(
+        r['Health']['value_html'] == first['Health']['value_html'] and
+        r['Flammability']['value_html'] == first['Flammability']['value_html'] and
+        r['Instability']['value_html'] == first['Instability']['value_html'] and
+        r['Special']['value_html'] == first['Special']['value_html']
+        for r in filtered
+    )
 
-        for result in results:
-            entry = result.get(category, {})
-            value = entry.get("value_html", "").strip()
-            desc = entry.get("description", "").strip()
-            if value or desc:
-                values.append(value)
-                descriptions.append(desc)
-                full_entries.append(entry)
-
-        print(f"{category}")
-
-        if not values:
-            print("- All blank (no data for this category in any result)\n")
-            if category == "Special":
-                consensus_result["Special"] = {
-                    "value_html": None,
-                    "description": None
-                }
-            continue
-
-        all_values_same = all(v == values[0] for v in values)
-        all_desc_same = all(d == descriptions[0] for d in descriptions)
-
-        if all_values_same and all_desc_same:
-            print(f"- All match: {values[0]} - {descriptions[0]}\n")
-            consensus_result[category] = {
-                "value_html": values[0],
-                "description": descriptions[0]
-            }
-        else:
-            print("- Mismatch:")
-            for i, (v, d) in enumerate(zip(values, descriptions)):
-                print(f"- Chem {i}: {v} - {d}")
-            print()
-
-    if "Special" not in consensus_result:
-        consensus_result["Special"] = {
-            "value_html": None,
-            "description": None
-        }
-
+    consensus_result = first if consensus else filtered
     return consensus_result
 
 

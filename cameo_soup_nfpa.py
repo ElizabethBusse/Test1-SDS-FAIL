@@ -23,10 +23,29 @@ def extract_nfpa_704(url):
         label = label_map.get(quadrant, quadrant)
 
         value_cell = row.find_next_sibling("td", class_="value")
-        value_html = str(value_cell.decode_contents()).strip()
+        value_html_raw = str(value_cell.decode_contents()).strip()
 
-        desc_cell = value_cell.find_next_sibling("td", class_="description")
-        description = desc_cell.get_text(strip=True) if desc_cell else ""
+        if label == "Special":
+            value_soup = BeautifulSoup(value_html_raw, "html.parser")
+            strike_tag = value_soup.find("strike")
+
+            # Only capture 'W', not any following text
+            if strike_tag:
+                value_html = "<strike>W</strike>"
+            else:
+                text = value_soup.get_text(strip=True)
+                value_html = None if not text else text[0]
+
+            # Extract description
+            desc_tag = value_soup.find("td", class_="description")
+            if not desc_tag:
+                parent_tr = row.find_parent("tr")
+                desc_tag = parent_tr.find("td", class_="description") if parent_tr else None
+            description = desc_tag.get_text(strip=True) if desc_tag else None
+        else:
+            value_html = value_html_raw
+            desc_cell = row.find_next_sibling("td", class_="description")
+            description = desc_cell.get_text(strip=True) if desc_cell else ""
 
         nfpa_data[label] = {
             "value_html": value_html,
@@ -36,6 +55,6 @@ def extract_nfpa_704(url):
     return nfpa_data
 
 if __name__ == "__main__":
-    url = "https://cameochemicals.noaa.gov/chemical/9215"
+    url = "https://cameochemicals.noaa.gov/chemical/2284"
     nfpa_info = extract_nfpa_704(url)
     print(nfpa_info)
