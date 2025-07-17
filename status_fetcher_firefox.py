@@ -9,8 +9,9 @@ import time
 import os
 import requests
 import tempfile
-
 import streamlit as st
+
+from cameo_soup_nfpa import *
 
 temp_dir = tempfile.TemporaryDirectory()
 selected_dir = temp_dir.name
@@ -98,7 +99,7 @@ def fetch_sds_sigma_aldrich(cas_number, download_dir=None):
 def fetch_sds_aaron_chem(cas_number, download_dir=None):
     with st.status("Searching AaronChem...", expanded=True) as status:
         try:
-            st.write("Navigating to Aaron-Chem...")
+            st.write("Navigating to Aaron Chemicals...")
             url = f"https://www.aaronchem.com/sds/{cas_number}.pdf"
             headers = {
                 "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.5993.70 Safari/537.36"
@@ -121,6 +122,99 @@ def fetch_sds_aaron_chem(cas_number, download_dir=None):
         except Exception as e:
             print(f"AaronChem Error: {e}")
             return False
+
+
+def fetch_nfpa_cameo(cas_number):
+    with st.status("Searching Cameo Chemicals for NFPA 704...", expanded=True) as status:
+        try:
+            driver = webdriver.Firefox(options=options)
+            print("Navigating to Cameo Chemicals...")
+            driver.get("https://cameochemicals.noaa.gov/search/simple")
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//input[@name='cas']")))
+            st.write("Homepage loaded")
+
+            search = driver.find_element(By.XPATH, "//input[@name='cas']")
+            search.clear()
+            search.send_keys(cas_number)
+            time.sleep(0.5)
+            search.send_keys(u'\ue007')
+
+            st.write("Searching for tables...")
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'a.pseudo_button[href^="/chemical/"]')))
+
+            links = driver.find_elements(By.CSS_SELECTOR, 'a.pseudo_button[href^="/chemical/"]')
+            # print(len(links))
+
+            nfpa_urls = [link.get_attribute("href") for link in links]
+            # print("Collected NFPA URLs:", nfpa_urls)
+
+            nfpa_results = []
+            for url in nfpa_urls:
+                result = extract_nfpa_704(url)
+                nfpa_results.append(result)
+
+            # print(nfpa_results)
+            return (nfpa_results)
+
+        except Exception as e:
+            print(f"Cameo Chemicals Error: {e}")
+        finally:
+            driver.quit()
+
+
+def compare_nfpa_results(results):
+    categories = ["Health", "Flammability", "Instability", "Special"]
+
+    consensus_result = {}
+
+    for category in categories:
+        values = []
+        descriptions = []
+        full_entries = []
+
+        for result in results:
+            entry = result.get(category, {})
+            value = entry.get("value_html", "").strip()
+            desc = entry.get("description", "").strip()
+            if value or desc:
+                values.append(value)
+                descriptions.append(desc)
+                full_entries.append(entry)
+
+        print(f"{category}")
+
+        if not values:
+            print("- All blank (no data for this category in any result)\n")
+            if category == "Special":
+                consensus_result["Special"] = {
+                    "value_html": None,
+                    "description": None
+                }
+            continue
+
+        all_values_same = all(v == values[0] for v in values)
+        all_desc_same = all(d == descriptions[0] for d in descriptions)
+
+        if all_values_same and all_desc_same:
+            print(f"- All match: {values[0]} - {descriptions[0]}\n")
+            consensus_result[category] = {
+                "value_html": values[0],
+                "description": descriptions[0]
+            }
+        else:
+            print("- Mismatch:")
+            for i, (v, d) in enumerate(zip(values, descriptions)):
+                print(f"- Chem {i}: {v} - {d}")
+            print()
+
+    if "Special" not in consensus_result:
+        consensus_result["Special"] = {
+            "value_html": None,
+            "description": None
+        }
+
+    return consensus_result
+
 
 # if __name__ == "__main__":
 #     # fetch_sds_sigma_aldrich('64-19-7', '/Users/sophiezhou/Downloads/purdue/[10] summer 25/evonik/SDS GHS Extractor')

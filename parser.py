@@ -14,12 +14,7 @@ from haz_comp_full import *
 
 # NOTE: specified only for SigmaAldrich (Millipore Sigma) and AaronChem (no guarantees on functionality beyond)
 
-# TODO: give option to input cas number (alongside SDS upload) [separate from cas number lookup]
-#       clear UI indicating what cross validation measures passed/failed (including needing OCR), option to approve or deny entries or edit specific entries
-#       in cas number search -> if no SDS found on SA or AC, then allow single file upload
-#       cas # repeat handling (take input and put it through set)
-#       choose directory single time, every other time need to reference this
-#       synonym repeat fix
+# TODO: in cas number search -> if no SDS found on SA or AC, then allow single file upload
 
 # TODO: section 3 does not work (pdf name extractor, may just be irrelevant)
 #       show synonyms under chemical name on UI

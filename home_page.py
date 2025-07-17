@@ -1,6 +1,7 @@
 import streamlit as st
 from parser import is_valid_cas
 from streamlit_pdf_conv import sds_upload, cas_reader
+import re
 
 # Configure page settings
 # st.set_page_config(
@@ -63,10 +64,8 @@ if not st.session_state.submitted:
 
     if pressed:
         if invalid:
-            print("invalid")
             pass
         else:
-            print("valid")
             if 'inputs' in st.session_state:
                 print(st.session_state.inputs)
             st.session_state.submitted = True
@@ -77,10 +76,10 @@ if not st.session_state.submitted:
 
 
 
-def page_design(results):
+def page_design(results, show_all=False):
     with st.container():
         cas_number = results.get("cas_number", "None")
-        expander1 = st.expander(f"{cas_number}", expanded=True)
+        expander1 = st.expander(f"{cas_number}", expanded=show_all)
         expander1.write(f"**CAS Number**: {cas_number}")
 
         cid = results.get("cid", "None")
@@ -95,8 +94,6 @@ def page_design(results):
             else:
                 col1.write("**Name**")
                 if isinstance(pubnames, list):
-                    import re
-
                     def strip_html_tags(text):
                         return re.sub(r"<.*?>", "", text)
 
@@ -163,31 +160,50 @@ def page_design(results):
 
 
 if st.session_state.submitted:
-    if 'uploaded' in st.session_state:
-        print(st.session_state.uploaded)
-        for uploaded_file in st.session_state.uploaded:
-            with st.spinner("Reading..."):
-                results = sds_upload(uploaded_file)
-                # st.write(results)
-            page_design(results)
+    if "all_results" not in st.session_state:
+        results_combined = []
+
+        if not st.session_state.uploaded:
+            print("No uploaded files, skipping...")
+        # if 'uploaded' in st.session_state:
+        else:
+            print(st.session_state.uploaded)
+            for uploaded_file in st.session_state.uploaded:
+                with st.spinner("Reading..."):
+                    results = sds_upload(uploaded_file)
+                results_combined.append(results)
+            st.success("PDFs processed")
+                    # st.write(results)
+                # page_design(results)
 
 
-    if 'inputs' in st.session_state:
-        print(st.session_state.inputs)
-        data_editor_output = st.session_state.inputs
-        cas_numbers = []
+        if 'inputs' in st.session_state:
+            print(st.session_state.inputs)
+            data_editor_output = st.session_state.inputs
+            cas_numbers = []
 
-        for row in data_editor_output['edited_rows'].values():
-            cas = row.get('CAS Number')
-            if cas:
-                cas_numbers.append(cas)
-        for row in data_editor_output['added_rows']:
-            cas = row.get('CAS Number')
-            if cas:
-                cas_numbers.append(cas)
+            for row in data_editor_output['edited_rows'].values():
+                cas = row.get('CAS Number')
+                if cas:
+                    cas_numbers.append(cas)
+            for row in data_editor_output['added_rows']:
+                cas = row.get('CAS Number')
+                if cas:
+                    cas_numbers.append(cas)
 
+            cas_numbers = list(set(cas_numbers))
+            results2 = cas_reader(cas_numbers)
+            results_combined.extend(results2)
 
-        results2 = cas_reader(cas_numbers)
-        # st.write(results)
-        for result in results2:
-            page_design(result)
+        st.session_state["all_results"] = results_combined
+        st.rerun()
+
+    else:
+        col1, col2 = st.columns([13,3])
+        if col1.button("Home", type="primary"):
+            for key in ["submitted", "uploaded", "inputs", "all_results", "show_data_editor"]:
+                st.session_state.pop(key, None)
+            st.rerun()
+        show_all = col2.toggle("Expand all", value=True)
+        for result in st.session_state["all_results"]:
+            page_design(result, show_all=show_all)
