@@ -133,7 +133,7 @@ def fetch_nfpa_cameo(cas_number):
     with st.status(f"Searching Cameo for NFPA 704 rating ({cas_number})...", expanded=True) as status:
         try:
             driver = webdriver.Firefox(options=options)
-            print("Navigating to Cameo Chemicals...")
+            st.write("Navigating to Cameo Chemicals...")
             driver.get("https://cameochemicals.noaa.gov/search/simple")
             WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//input[@name='cas']")))
             st.write("Homepage loaded")
@@ -158,7 +158,9 @@ def fetch_nfpa_cameo(cas_number):
                 result = extract_nfpa_704(url)
                 nfpa_results.append(result)
 
-            # print(nfpa_results)
+            if not nfpa_results or nfpa_results == [{}]:
+                status.update(label="No NFPA information found on Cameo", state="error", expanded=False)
+                return None
             status.update(label="NFPA rating search completed", state="complete", expanded=False)
             return nfpa_results
 

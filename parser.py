@@ -17,10 +17,56 @@ import string
 # for imported SDS documents
 
 # NOTE: specified only for SigmaAldrich (Millipore Sigma) and AaronChem (no guarantees on functionality beyond)
-#       pdf name extractor obsolete (section 3)
 
-# TODO: fails when no wifi (pubchem lookup fails)
-#       indicate no pubchem ref + error
+
+def extract_between_sections(text, start_section, end_section):
+        """
+        extract all text between two specified section headers
+        start_section = [section] 7. title
+        end_section = [section] 8. title
+        """
+
+        lines = text.splitlines()
+        start_pattern = rf"(section\s*)?{start_section[0]}[\.:]?\s*{start_section[1]}"
+        end_pattern = rf"(section\s*)?{end_section[0]}[\.:]?\s*{end_section[1]}"
+
+        inside = False
+        section_lines = []
+
+        for line in lines:
+            if not inside and re.search(start_pattern, line, re.IGNORECASE):
+                inside = True
+                continue
+            if inside:
+                if re.search(end_pattern, line, re.IGNORECASE):
+                    break
+                section_lines.append(line.strip())
+
+        section_text = "\n".join(section_lines)
+
+        # remove footers
+        section_text = re.sub(
+            r"(?:SIGALD|Aldrich)\s*-\s*\d+\s*[\r\n]+\s*Page\s*\d+\s*of\s*\d+\s*[\r\n]+.*?MilliporeSigma\s+in\s+the\s+US\s+and\s+Canada",
+            "",
+            section_text,
+            flags=re.IGNORECASE | re.DOTALL
+        )
+        # Remove Merck KGaA/MilliporeSigma business footer
+        section_text = re.sub(
+            r"The life science business of Merck KGaA, Darmstadt, Germany\s*operates as MilliporeSigma in the US and Canada",
+            "",
+            section_text,
+            flags=re.IGNORECASE | re.DOTALL
+        )
+        # Remove Aldrich page footer like "Aldrich - B17905\nPage 2  of  11"
+        section_text = re.sub(
+            r"Aldrich\s*-\s*[A-Z0-9]+\s*Page\s*\d+\s*of\s*\d+",
+            "",
+            section_text,
+            flags=re.IGNORECASE
+        )
+
+        return section_text
 
 
 # SECTION 1. extract text from PDF with OCR fallback
@@ -134,7 +180,7 @@ def extract_all_cas_numbers(text):
     valid_high = {cas for cas in high_conf_matches if is_valid_cas(cas)}
     valid_low = {cas for cas in low_conf_matches if is_valid_cas(cas)}
 
-    print(f"Extracted CAS Numbers:\n  High Confidence: {list(valid_high)}\n  Low Confidence: {list(valid_low)}")
+    # print(f"Extracted CAS Numbers:\n  High Confidence: {list(valid_high)}\n  Low Confidence: {list(valid_low)}")
 
     return {
         "high_confidence": list(valid_high),
@@ -144,72 +190,39 @@ def extract_all_cas_numbers(text):
 
 # SECTION 3. chemical name extractor (name on *doc*)
 def extract_product_name(text):
-    def extract_section_1(text):
-        lines = text.splitlines()
-        section_lines = []
-        inside_section_1 = False
+    # Extract product name between Section 1 and Section 2
+    section_1 = extract_between_sections(
+        text,
+        (1, r"identification"),
+        (2, r"hazards\s+identification")
+    )
 
-        # only looks in section 1 identification to reduce error
-        for line in lines:
-            if re.search(r"section\s*1[\.:]?", line, re.IGNORECASE):
-                inside_section_1 = True
-            elif inside_section_1 and re.search(r"section\s*2[\.:]?", line, re.IGNORECASE):
-                break
-            elif inside_section_1:
-                section_lines.append(line.strip())
-        return section_lines
-    
-    section_lines = extract_section_1(text)
+    if not section_1 or section_1.strip() == "":
+        section_1 = extract_between_sections(
+            text,
+            (1, r"product\s+and\s+company\s+identification"),
+            (2, r"hazards\s+identification")
+        )
 
-    # fuzzy keyword search (flexibility)
-    keywords = [
-        "Product Name",
-        "Substance Name",
-        "Product Identifier",
-        "Chemical Name",
-        "GHS Product Identifier",
-        "Identification of the substance"
-    ]
-
-    for i, raw_line in enumerate(section_lines):
-        line = raw_line.strip().lstrip(':').strip()
-        for keyword in keywords:
-            if fuzz.partial_ratio(keyword.lower(), line.lower()) > 80: # adjust as necessary
-                match = re.search(rf"{re.escape(keyword)}\s*[:\-]?\s*(.+)", line, re.IGNORECASE)
-                if match:
-                    name = match.group(1).strip()
-                else:
-                    # fallback, potentially at next non-empty line
-                    name = ""
-                    j = i + 1
-                    while j < len(section_lines) and name.strip() == "":
-                        name = section_lines[j].strip()
-                        j += 1
-
-                # clean up trailing descriptors
-                name = re.split(r",|≥|;|for|\s\d+[%]", name, maxsplit=1)[0].strip()
-                # print("Name found on SDS: ", name)
-                return name
-   
-    return "Product name not found on SDS"
+    # Heuristic: look for line after "Product name" or "Product identifier"
+    match = re.search(r"(Product name[\s:]*)(.*)", section_1, re.IGNORECASE)
+    if match:
+        return match.group(2).strip()
+    return None
 
 
-# SECTION 4. Pick best CAS with PubChem Validation
-    # needs exact chemical name to validate, but can pass with no validation
+# SECTION 4. High confidence or all low confidence
 def extract_best_guess_cas(text):
     cas_split = extract_all_cas_numbers(text)
-    cas_candidates = cas_split["high_confidence"] + cas_split["low_confidence"]
-    chemical_name_in_doc = extract_product_name(text).lower()
+    high_conf = cas_split["high_confidence"]
+    low_conf = cas_split["low_confidence"]
 
-    for cas in cas_candidates:
-        try:
-            pubchem_names = get_nist_names(cas)
-            if pubchem_names and chemical_name_in_doc in pubchem_names:
-                return {"cas": cas, "validated": True}
-        except Exception as e:
-            print(f"PubChem name validation failed for CAS {cas}: {e}")
-        
-    return {"cas": cas_candidates[0] if cas_candidates else None, "validated": False}
+    if high_conf:
+        return {"cas": high_conf[0], "validated": True}
+    elif low_conf:
+        return {"cas": low_conf, "validated": False}
+    else:
+        return {"cas": None, "validated": False}
 
 
 # SECTION 5. hazard statements
@@ -409,56 +422,6 @@ def compare_ghs_source(extracted_matches, pubhcem_h_statements):
     }
 
 
-def extract_between_sections(text, start_section, end_section):
-        """
-        extract all text between two specified section headers
-        start_section = [section] 7. title
-        end_section = [section] 8. title
-        """
-
-        lines = text.splitlines()
-        start_pattern = rf"(section\s*)?{start_section[0]}[\.:]?\s*{start_section[1]}"
-        end_pattern = rf"(section\s*)?{end_section[0]}[\.:]?\s*{end_section[1]}"
-
-        inside = False
-        section_lines = []
-
-        for line in lines:
-            if not inside and re.search(start_pattern, line, re.IGNORECASE):
-                inside = True
-                continue
-            if inside:
-                if re.search(end_pattern, line, re.IGNORECASE):
-                    break
-                section_lines.append(line.strip())
-
-        section_text = "\n".join(section_lines)
-
-        # remove footers
-        section_text = re.sub(
-            r"(?:SIGALD|Aldrich)\s*-\s*\d+\s*[\r\n]+\s*Page\s*\d+\s*of\s*\d+\s*[\r\n]+.*?MilliporeSigma\s+in\s+the\s+US\s+and\s+Canada",
-            "",
-            section_text,
-            flags=re.IGNORECASE | re.DOTALL
-        )
-        # Remove Merck KGaA/MilliporeSigma business footer
-        section_text = re.sub(
-            r"The life science business of Merck KGaA, Darmstadt, Germany\s*operates as MilliporeSigma in the US and Canada",
-            "",
-            section_text,
-            flags=re.IGNORECASE | re.DOTALL
-        )
-        # Remove Aldrich page footer like "Aldrich - B17905\nPage 2  of  11"
-        section_text = re.sub(
-            r"Aldrich\s*-\s*[A-Z0-9]+\s*Page\s*\d+\s*of\s*\d+",
-            "",
-            section_text,
-            flags=re.IGNORECASE
-        )
-
-        return section_text
-
-
 # SECTION 8: GHS classification category 1
 def ghs_category_1(text):
     section_2 = extract_between_sections(
@@ -650,6 +613,7 @@ def extract_additional_safety_info(text):
     return info
 
 
+# SECTION 10: other hazards
 def other_hazards(text):
     section_2 = extract_between_sections(
         text,
@@ -669,7 +633,7 @@ def other_hazards(text):
         hnoc_text = re.split(r"\n\s*(?:GHS label elements|Section\s*\d+)", hnoc_text, maxsplit=1)[0].strip()
         lines = [strip_punctuation(line.strip()) for line in hnoc_text.splitlines() if line.strip()]
         result_lines = list(dict.fromkeys(lines))  # remove duplicates, preserve order
-        print("HNOC TEXT", result_lines)
+        # print("HNOC TEXT", result_lines)
         return result_lines if result_lines else None
 
     other_hazards_pattern = r"Other Hazards[:\-]?\s*(.*?)(?=\n\s*GHS label elements)"
@@ -679,14 +643,14 @@ def other_hazards(text):
         other_text = re.sub(r"^-+\s*", "", other_text)
         lines = [strip_punctuation(line.strip()) for line in other_text.splitlines() if line.strip()]
         result_lines = list(dict.fromkeys(lines))
-        print("OTHER TEXT", result_lines)
+        # print("OTHER TEXT", result_lines)
         return result_lines if result_lines else None
 
     return None
 
 
 # SECTION 11. full parser function
-def parse_sds_file(filepath=None, input_val=None, source="PDF Upload"):
+def parse_sds_file(filepath=None, cas_number = None, input_val=None, source="PDF Upload"):
     """
     full SDS parsing pipeline:
     - extract text from SDS (OCR fallback)
@@ -698,7 +662,7 @@ def parse_sds_file(filepath=None, input_val=None, source="PDF Upload"):
 
     result = {
         "filepath": filepath,
-        "cas_number": None,
+        "cas_number": cas_number,
         "chemical_name": None,
         "pubchem_name": None,
         "cas_validated": False,
@@ -710,7 +674,8 @@ def parse_sds_file(filepath=None, input_val=None, source="PDF Upload"):
         "source": source,
         "nfpa": None,
         "ghs_categories": None,
-        "other_hazards": None
+        "other_hazards": None,
+        "additional_cas": None
     }
 
     try:
@@ -718,40 +683,52 @@ def parse_sds_file(filepath=None, input_val=None, source="PDF Upload"):
             text = extract_text_from_pdf(filepath)
         elif input_val != None:
             text = input_val
+
         result["chemical_name"] = extract_product_name(text)
-        cas_info = extract_best_guess_cas(text)
-        result["cas_number"] = cas_info["cas"]
-        result["cas_validated"] = cas_info["validated"]
         ghs_from_sds = extract_ghs_statements(text)
         result["ghs_from_sds"] = ghs_from_sds
-        pubchem_name = get_nist_names(result["cas_number"])
-        result["pubchem_name"] = pubchem_name
         ghs_category = ghs_category_1(text)
         result["ghs_categories"] = ghs_category
-        # print("CATS:", result["ghs_categories"])
         other_haz = other_hazards(text)
         result["other_hazards"] = other_haz
-
-        if cas_info["cas"]:
-            try:
-                pubchem_ghs, cid = get_pubchem_ghs_by_cas(cas_info["cas"])
-                result["cid"] = cid
-                result["ghs_from_pubchem"] = pubchem_ghs
-                result["comparison"] = compare_ghs_source(ghs_from_sds, pubchem_ghs)
-                result["cas_validated"] = True
-            except Exception as e:
-                result["notes"].append(f"PubChem GHS lookup failed for CAS {cas_info['cas']}: {e}")
-        else:
-            result["notes"].append("No CAS number found; skipping PubChem GHS lookup")
-
         extra_info = extract_additional_safety_info(text)
         # print("\n[INFO] Additional Safety Info by Section:")
         # for k, v in extra_info.items():
             # print(f"    {k}: {v}")
         result.update(extra_info)
+
+
+        cas_info = extract_best_guess_cas(text)
+        result["cas_validated"] = cas_info["validated"]
+        if not cas_number:
+            print("RAN FINDING CAS NUMBER FROM SDS")
+            if isinstance(cas_info["cas"], str):
+                result["cas_number"] = cas_info["cas"]
+            elif isinstance(cas_info["cas"], list):
+                result["cas_number"] = cas_info["cas"]
+                result["additional_cas"] = secondary_parse(result)
+                # print(result["additional_cas"])
+                result["cas_number"] = cas_info["cas"][0] # LIST, including [0]
+
+
+        pubchem_name = get_nist_names(result["cas_number"])
+        result["pubchem_name"] = pubchem_name
+        # print("CATS:", result["ghs_categories"])
+
+        if result["cas_number"]:
+            try:
+                pubchem_ghs, cid = get_pubchem_ghs_by_cas(result["cas_number"])
+                result["cid"] = cid
+                result["ghs_from_pubchem"] = pubchem_ghs
+                result["comparison"] = compare_ghs_source(ghs_from_sds, pubchem_ghs)
+                result["cas_validated"] = True
+            except Exception as e:
+                result["notes"].append(f"PubChem GHS lookup failed for CAS {result["cas_number"]}: {e}")
+        else:
+            result["notes"].append("No CAS number found; skipping PubChem GHS lookup")
         
-        if cas_info["cas"]:
-            res = fetch_nfpa_cameo(cas_info["cas"])
+        if result["cas_number"]:
+            res = fetch_nfpa_cameo(result["cas_number"])
             if res is not None:
                 consensus = compare_nfpa_results(res)
                 result["nfpa"] = consensus
@@ -771,3 +748,44 @@ def parse_sds_file(filepath=None, input_val=None, source="PDF Upload"):
         result["notes"].append(f"Error on line:\n{tb}")
 
     return result
+
+def secondary_parse(result):
+    additional_results = []
+
+    # Repeat for each CAS in result["cas_number"] (excluding the first one)
+    cas_list = result["cas_number"]
+    if isinstance(cas_list, list) and len(cas_list) > 1:
+        for cas in cas_list[1:]:
+            temp_result = result.copy()
+            temp_result["cas_number"] = cas
+            temp_result["pubchem_name"] = get_nist_names(cas)
+
+            if cas:
+                try:
+                    pubchem_ghs, cid = get_pubchem_ghs_by_cas(cas)
+                    temp_result["cid"] = cid
+                    temp_result["ghs_from_pubchem"] = pubchem_ghs
+                    temp_result["comparison"] = compare_ghs_source(temp_result["ghs_from_sds"], pubchem_ghs)
+                    temp_result["cas_validated"] = True
+                except Exception as e:
+                    temp_result["notes"].append(f"PubChem GHS lookup failed for CAS {cas}: {e}")
+            else:
+                temp_result["notes"].append("No CAS number found; skipping PubChem GHS lookup")
+
+            if cas:
+                res = fetch_nfpa_cameo(cas)
+                if res is not None:
+                    consensus = compare_nfpa_results(res)
+                    temp_result["nfpa"] = consensus
+                else:
+                    consensus = None
+            else:
+                print("no cas number found")
+
+            if consensus is None:
+                temp_result["nfpa"] = extract_nfpa_hazard(temp_result["cid"])
+
+            temp_result["additional_cas"] = True
+
+            additional_results.append(temp_result)
+    return additional_results

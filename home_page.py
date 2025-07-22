@@ -110,6 +110,11 @@ def page_design(results, show_all=False):
     with st.container():
         cas_number = results.get("cas_number", "None")
         expander1 = st.expander(f"{cas_number}", expanded=show_all)
+
+        extra = results.get("additional_cas", "None")
+        if extra:
+            expander1.badge(f"Multiple CAS found on SDS PDF ({results.get("chemical_name")})", icon='⚠️', color="orange")
+
         expander1.write(f"**CAS Number**: {cas_number}")
 
         cid = results.get("cid", "None")
@@ -118,12 +123,14 @@ def page_design(results, show_all=False):
         expander1.divider()
         col1, col2 = expander1.columns([13,1])
         with col1:
+            col1.write("**Name**")
+            sds_name = results.get("chemical_name", "None")
+            if sds_name:
+                col1.badge(sds_name, color="primary")
+
+
             pubnames = results.get("pubchem_name", "None")
-            if not pubnames:
-                col1.write("**Name**")
-                col1.write(None)
-            else:
-                col1.write("**Name**")
+            if pubnames:
                 if isinstance(pubnames, list):
                     def strip_html_tags(text):
                         return re.sub(r"<.*?>", "", text)
@@ -138,6 +145,9 @@ def page_design(results, show_all=False):
                             pass
                 else:
                     col1.badge(f"{pubnames}", color="gray")
+
+            if not pubnames and not sds_name:
+                col1.write(None)
         with col2:
             if pubnames:
                 st.badge("", icon=":material/check:", color="green")
@@ -289,3 +299,6 @@ if st.session_state.submitted:
         show_all = col2.toggle("Expand all", value=True)
         for result in st.session_state["all_results"]:
             page_design(result, show_all=show_all)
+            if result.get("additional_cas"):
+                for additional in result["additional_cas"]:
+                    page_design(additional, show_all=show_all)

@@ -23,7 +23,7 @@ def search_by_cas(cas_list):
             pdf_path = os.path.join(selected_dir, f"{cas}.pdf")
             if os.path.exists(pdf_path):
                 print(f"Parsing {pdf_path}...")
-                result1 = run_parser(pdf_path, source=source1)
+                result1 = run_parser(pdf_path, source=source1, cas=cas)
                 results.append(result1)
                 print(f"PASSING IN SOURCE1: {source1}")
             else:

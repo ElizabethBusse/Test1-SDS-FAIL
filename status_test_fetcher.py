@@ -4,7 +4,7 @@ import streamlit as st
 # tests cas number lookup
 
 def test_fetch_cas(cas_number):
-    print("RUNNING ON STATUS FILE")
+    # print("RUNNING ON STATUS FILE")
     print(f"Searching for CAS number: {cas_number}")
     print(f"\n\nTesting CAS: {cas_number}")
     success = fetch_sds_sigma_aldrich(cas_number, selected_dir)

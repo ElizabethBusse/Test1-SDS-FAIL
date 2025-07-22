@@ -7,14 +7,14 @@ import inspect
 
 # tests SDS upload
 
-def run_parser(filepath=None, input_val=None, source="PDF Upload"):
+def run_parser(filepath=None, input_val=None, source="PDF Upload", cas=None):
     stack = inspect.stack()
     caller = stack[1].function
     # print("caller", caller)
     if caller == "sds_upload":
         results = parse_sds_file(input_val=input_val, source=source)
     else:
-        results = parse_sds_file(filepath, source=source)
+        results = parse_sds_file(filepath, source=source, cas_number=cas)
 
     # print("\n\n\n\n\nSDS Parsing Result:\n")
     # print(json.dumps(results, indent=2))
