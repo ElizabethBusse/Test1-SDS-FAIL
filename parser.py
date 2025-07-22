@@ -12,6 +12,7 @@ from pub_nfpa import *
 from nist_name import get_nist_names
 import json
 from rapidfuzz import process, fuzz
+import string
 
 # for imported SDS documents
 
@@ -649,7 +650,42 @@ def extract_additional_safety_info(text):
     return info
 
 
-# SECTION 10. full parser function
+def other_hazards(text):
+    section_2 = extract_between_sections(
+        text,
+        (2, r"hazards\s+identification"),
+        (3, r"composition\s*/\s*information\s+on\s+ingredients")
+    )
+    # Search for text after "Hazards not otherwise classified (HNOC) or not covered by GHS"
+    hnoc_pattern = r"Hazards not otherwise classified \(HNOC\) or not covered by GHS[:\-]?\s*(.*)"
+    hnoc_match = re.search(hnoc_pattern, section_2, re.IGNORECASE | re.DOTALL)
+    def strip_punctuation(s):
+        return s.translate(str.maketrans('', '', string.punctuation))
+
+    result_lines = []
+    if hnoc_match:
+        hnoc_text = hnoc_match.group(1).lstrip().strip()
+        hnoc_text = re.sub(r"^-+\s*", "", hnoc_text)
+        hnoc_text = re.split(r"\n\s*(?:GHS label elements|Section\s*\d+)", hnoc_text, maxsplit=1)[0].strip()
+        lines = [strip_punctuation(line.strip()) for line in hnoc_text.splitlines() if line.strip()]
+        result_lines = list(dict.fromkeys(lines))  # remove duplicates, preserve order
+        print("HNOC TEXT", result_lines)
+        return result_lines if result_lines else None
+
+    other_hazards_pattern = r"Other Hazards[:\-]?\s*(.*?)(?=\n\s*GHS label elements)"
+    other_match = re.search(other_hazards_pattern, section_2, re.IGNORECASE | re.DOTALL)
+    if other_match:
+        other_text = other_match.group(1).lstrip().strip()
+        other_text = re.sub(r"^-+\s*", "", other_text)
+        lines = [strip_punctuation(line.strip()) for line in other_text.splitlines() if line.strip()]
+        result_lines = list(dict.fromkeys(lines))
+        print("OTHER TEXT", result_lines)
+        return result_lines if result_lines else None
+
+    return None
+
+
+# SECTION 11. full parser function
 def parse_sds_file(filepath=None, input_val=None, source="PDF Upload"):
     """
     full SDS parsing pipeline:
@@ -673,7 +709,8 @@ def parse_sds_file(filepath=None, input_val=None, source="PDF Upload"):
         "notes": [],
         "source": source,
         "nfpa": None,
-        "ghs_categories": None
+        "ghs_categories": None,
+        "other_hazards": None
     }
 
     try:
@@ -691,7 +728,9 @@ def parse_sds_file(filepath=None, input_val=None, source="PDF Upload"):
         result["pubchem_name"] = pubchem_name
         ghs_category = ghs_category_1(text)
         result["ghs_categories"] = ghs_category
-        print("CATS:", result["ghs_categories"])
+        # print("CATS:", result["ghs_categories"])
+        other_haz = other_hazards(text)
+        result["other_hazards"] = other_haz
 
         if cas_info["cas"]:
             try:

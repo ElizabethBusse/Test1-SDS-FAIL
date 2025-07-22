@@ -171,12 +171,23 @@ def page_design(results, show_all=False):
         cat1 = results.get("ghs_categories", "None")
         if not cat1:
             expander1.write(None)
-        for item in cat1:
-            col1, col2 = expander1.columns([1,13])
-            text = item.get("ghs_name_match", "")
-            cat = item.get("category", "")
-            col1.badge(cat, color="gray")
-            col2.write(text)
+        else:
+            for item in cat1:
+                col1, col2 = expander1.columns([1,13])
+                text = item.get("ghs_name_match", "")
+                cat = item.get("category", "")
+                col1.badge(cat, color="gray")
+                col2.write(text)
+
+        
+        expander1.divider()
+        expander1.write("**Other Hazards**")
+        haz = results.get("other_hazards", "None")
+        if not haz:
+            expander1.write(None)
+        else:
+            for val in haz:
+                expander1.write(val)
 
 
         expander1.divider()
