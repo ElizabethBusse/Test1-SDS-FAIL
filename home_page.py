@@ -3,6 +3,9 @@ from parser import is_valid_cas
 from streamlit_pdf_conv import sds_upload, cas_reader
 import re
 
+import io
+from exporter import export_result_to_excel
+
 # Configure page settings
 # st.set_page_config(
 #     page_title="SDS GHS Extractor",
@@ -291,8 +294,8 @@ if st.session_state.submitted:
         st.rerun()
 
     else:
-        col1, col2 = st.columns([13,3])
-        if col1.button("Home", type="primary"):
+        col0, col1, col2 = st.columns([6,18,5])
+        if col1.button("Home", type="secondary"):
             for key in ["submitted", "uploaded", "inputs", "all_results", "show_data_editor"]:
                 st.session_state.pop(key, None)
             st.rerun()
@@ -302,3 +305,13 @@ if st.session_state.submitted:
             if result.get("additional_cas"):
                 for additional in result["additional_cas"]:
                     page_design(additional, show_all=show_all)
+        if st.session_state["all_results"]:
+            output = export_result_to_excel(st.session_state["all_results"])
+            with col0:
+                st.download_button(
+                    label="Export to Excel",
+                    data=output.getvalue(),
+                    file_name="sds_summary.xlsx",
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    type="primary"
+                )

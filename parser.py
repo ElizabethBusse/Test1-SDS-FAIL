@@ -701,7 +701,6 @@ def parse_sds_file(filepath=None, cas_number = None, input_val=None, source="PDF
         cas_info = extract_best_guess_cas(text)
         result["cas_validated"] = cas_info["validated"]
         if not cas_number:
-            print("RAN FINDING CAS NUMBER FROM SDS")
             if isinstance(cas_info["cas"], str):
                 result["cas_number"] = cas_info["cas"]
             elif isinstance(cas_info["cas"], list):
