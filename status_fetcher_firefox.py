@@ -118,7 +118,7 @@ def fetch_sds_sigma_aldrich(cas_number, download_dir=None):
 
         except Exception as e:
             print(f"Sigma-Aldrich Error: {e}")
-            status.update(label=f"Not found on Sigma-Aldrich", state="error", expanded=False)
+            status.update(label=f"Not found on Sigma-Aldrich {e}", state="error", expanded=False)
             return False
         finally:
             driver.quit()
@@ -144,7 +144,7 @@ def fetch_sds_aaron_chem(cas_number, download_dir=None):
                 return True
             else:
                 st.write(f"No SDS found for CAS {cas_number} on AaronChem")
-                status.update(label=f"Not found on Aaron Chem", state="error", expanded=False)
+                status.update(label=f"Not found on Aaron Chem {e}", state="error", expanded=False)
                 return False
 
         except Exception as e:
@@ -190,7 +190,7 @@ def fetch_nfpa_cameo(cas_number):
         except Exception as e:
             # print(f"Cameo Chemicals Error: {e}")
             st.write(f"Cameo Chemicals Error: {e}")
-            status.update(label=f"No NFPA information found on Cameo", state="error", expanded=False)
+            status.update(label=f"No NFPA information found on Cameo {e}", state="error", expanded=False)
             return None
         finally:
             driver.quit()
