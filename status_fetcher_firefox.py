@@ -57,13 +57,23 @@ options.set_preference("pdfjs.disabled", True)
 options.set_preference("browser.download.manager.showWhenStarting", False)
 
 
+from selenium.webdriver.firefox.service import Service
+
+service = Service(GeckoDriverManager().install())
+driver = webdriver.Firefox(
+    options=options,
+    service=service,
+)
+
+
 def fetch_sds_sigma_aldrich(cas_number, download_dir=None):
     # print("RUNNING ON STATUS FILE")
     with st.status("Searching on Sigma-Aldrich...", expanded=True) as status:
         try:
             # driver = webdriver.Firefox(options=options, executable_path=GeckoDriverManager().install())
-            driver = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install()), options=options)
             # driver = get_remote_driver(options)
+            
+            # driver = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install()), options=options)
             st.write("Navigating to Sigma-Aldrich...")
             driver.get("https://www.sigmaaldrich.com")
             WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "header-search-search-wrapper-input")))
@@ -156,7 +166,7 @@ def fetch_sds_aaron_chem(cas_number, download_dir=None):
 def fetch_nfpa_cameo(cas_number):
     with st.status(f"Searching Cameo for NFPA 704 rating ({cas_number})...", expanded=True) as status:
         try:
-            driver = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install()), options=options)
+            # driver = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install()), options=options)
             st.write("Navigating to Cameo Chemicals...")
             driver.get("https://cameochemicals.noaa.gov/search/simple")
             WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, "//input[@name='cas']")))
