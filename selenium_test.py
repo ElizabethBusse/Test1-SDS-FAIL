@@ -22,4 +22,3 @@ driver = webdriver.Firefox(
     service=service,
 )
 driver.get(URL)
-st.write
