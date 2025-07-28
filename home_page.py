@@ -7,12 +7,11 @@ import io
 from exporter import export_result_to_excel
 
 # Configure page settings
-# st.set_page_config(
-#     page_title="SDS GHS Extractor",
-#     page_icon="🧪",
-#     layout="centered",
-#     initial_sidebar_state="collapsed"
-# )
+st.set_page_config(
+    page_title="SDS Reader",
+    page_icon="🧪",
+    layout="centered"
+)
 
 # from status_fetcher_firefox import clean_temp_dir, selected_dir
 # clean_temp_dir(selected_dir)
@@ -28,7 +27,7 @@ if not st.session_state.submitted:
     if "show_data_editor" not in st.session_state:
         st.session_state.show_data_editor = False
 
-    st.header("Safety Data Sheet GHS Extractor")
+    st.header("Safety Data Sheet Parser")
 
     with st.form("all_data"):
         col1, col2 = st.columns(2)

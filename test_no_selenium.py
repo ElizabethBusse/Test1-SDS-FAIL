@@ -4,8 +4,7 @@ import os
 from cameo_soup_nfpa import extract_nfpa_704
 import tempfile
 from bs4 import BeautifulSoup
-
-# TODO: add status messages
+import streamlit as st
 
 selected_dir = tempfile.mkdtemp(dir="/tmp")
 
@@ -47,50 +46,57 @@ def extract_sigma_link(cas_number):
     
 
 def fetch_sds_sigma_aldrich(cas_number, download_dir=None):
-    try:
-        url = extract_sigma_link(cas_number)
-        headers = {
-            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.5993.70 Safari/537.36"
-        }
-        response = requests.get(url, headers=headers, stream=True)
+    with st.status("Searching on Sigma-Aldrich...", expanded=True) as status:
+        try:
+            url = extract_sigma_link(cas_number)
+            headers = {
+                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.5993.70 Safari/537.36"
+            }
+            response = requests.get(url, headers=headers, stream=True)
 
-        if response.status_code == 200 and 'application/pdf' in response.headers.get('Content-Type', ''):
-            save_path = os.path.join(download_dir or "/tmp", f"{cas_number}.pdf")
-            with open(save_path, 'wb') as f:
-                for chunk in response.iter_content(chunk_size=8192):
-                    f.write(chunk)
-            print(f"Downloaded SDS for {cas_number} from SA")
+            if response.status_code == 200 and 'application/pdf' in response.headers.get('Content-Type', ''):
+                save_path = os.path.join(download_dir or "/tmp", f"{cas_number}.pdf")
+                with open(save_path, 'wb') as f:
+                    for chunk in response.iter_content(chunk_size=8192):
+                        f.write(chunk)
+                print(f"Downloaded SDS for {cas_number} from SA")
+                status.update(label="Download completed from Sigma-Aldrich", state="complete", expanded=False)
+                return True
+            else:
+                print(f"No SDS found for CAS {cas_number} on SA")
+                status.update(label=f"Not found on Sigma-Aldrich", state="error", expanded=False)
+                return False
 
-            return True
-        else:
-            print(f"No SDS found for CAS {cas_number} on SA")
+        except Exception as e:
+            print(f"S-A Download Error: {e}")
+            status.update(label=f"Not found on Sigma-Aldrich", state="error", expanded=False)
             return False
-
-    except Exception as e:
-        print(f"S-A Download Error: {e}")
-        return False
     
 
 def fetch_sds_aaron_chem(cas_number, download_dir=None):
-    try:
-        url = f"https://www.aaronchem.com/sds/{cas_number}.pdf"
-        headers = {
-            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.5993.70 Safari/537.36"
-        }
-        response = requests.get(url, headers=headers, stream=True)
+    with st.status("Searching AaronChem...", expanded=True) as status:
+        try:
+            url = f"https://www.aaronchem.com/sds/{cas_number}.pdf"
+            headers = {
+                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.5993.70 Safari/537.36"
+            }
+            response = requests.get(url, headers=headers, stream=True)
 
-        if response.status_code == 200 and 'application/pdf' in response.headers.get('Content-Type', ''):
-            save_path = os.path.join(download_dir or "/tmp", f"{cas_number}.pdf")
-            with open(save_path, 'wb') as f:
-                for chunk in response.iter_content(chunk_size=8192):
-                    f.write(chunk)
-            return True
-        else:
+            if response.status_code == 200 and 'application/pdf' in response.headers.get('Content-Type', ''):
+                save_path = os.path.join(download_dir or "/tmp", f"{cas_number}.pdf")
+                with open(save_path, 'wb') as f:
+                    for chunk in response.iter_content(chunk_size=8192):
+                        f.write(chunk)
+                status.update(label="Download completed from Aaron Chemicals", state="complete", expanded=False)
+                return True
+            else:
+                status.update(label=f"Not found on Aaron Chem", state="error", expanded=False)
+                return False
+
+        except Exception as e:
+            print(f"AaronChem Error: {e}")
+            status.update(label=f"Not found on Aaron Chem", state="error", expanded=False)
             return False
-
-    except Exception as e:
-        print(f"AaronChem Error: {e}")
-        return False
 
 
 # return list of full url
@@ -138,16 +144,19 @@ def get_cameo_links_from_pubchem(cas):
 
 # returns list of nfpa result dicts
 def fetch_nfpa_cameo(cas_number):
-    cameo_links = get_cameo_links_from_pubchem(cas_number)
-    nfpa_results = []
+    with st.status(f"Searching Cameo for NFPA 704 rating ({cas_number})...", expanded=True) as status:
+        cameo_links = get_cameo_links_from_pubchem(cas_number)
+        nfpa_results = []
 
-    for url in cameo_links:
-        result = extract_nfpa_704(url)
-        nfpa_results.append(result)
+        for url in cameo_links:
+            result = extract_nfpa_704(url)
+            nfpa_results.append(result)
 
-    if not nfpa_results or nfpa_results == [{}]:
-        return None
-    return nfpa_results
+        if not nfpa_results or nfpa_results == [{}]:
+            status.update(label="No NFPA information found on Cameo", state="error", expanded=False)
+            return None
+        status.update(label="NFPA rating search completed", state="complete", expanded=False)
+        return nfpa_results
 
 
 def compare_nfpa_results(results):

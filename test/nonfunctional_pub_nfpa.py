@@ -1,5 +1,5 @@
-import streamlit as st
 import requests
+import streamlit as st
 
 def extract_nfpa_hazard(cid):
     with st.status("Searching PubChem for NFPA 704 rating...") as status:
@@ -49,10 +49,10 @@ def extract_nfpa_hazard(cid):
                     "value_html": value[0],
                     "description": value[2:].strip()
                 }
-            elif "Specific Notice" in name:
+            elif "Special" in name:
                 result["Special"] = {
-                    "value_html": value.split("-")[0].strip(),
-                    "description": "-".join(value.split("-")[1:]).strip()
+                "value_html": value[0] if value else None,
+                "description": value[2:].strip() if len(value) > 2 else ""
                 }
 
             # Remove leading dash from descriptions
@@ -60,11 +60,12 @@ def extract_nfpa_hazard(cid):
                 if result[key] and result[key]["description"].startswith("-"):
                     result[key]["description"] = result[key]["description"][1:].strip()
 
-        status.update(label="NFPA rating search completed from Pubchem", state="complete", expanded=False)
+            # Handle Special if None
+            if result["Special"] is None:
+                result["Special"] = {
+                    "value_html": None,
+                    "description": ""
+                }
 
-        return result if any(v for v in result.values()) else None
-
-
-if __name__ == "__main__":
-    result = extract_nfpa_hazard(24408)
-    print(result)
+    status.update(label="NFPA rating search completed", state="complete", expanded=False)
+    return result if any(v for v in result.values()) else None
