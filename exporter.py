@@ -26,17 +26,35 @@ def export_result_to_excel(results, output_stream=None):
 
         nfpa_data = result.get("nfpa", {})
         if nfpa_data:
-            nfpa_summary = []
-            for key in ["Health", "Flammability", "Instability", "Special"]:
-                value = nfpa_data.get(key, {}).get("value_html", "N/A")
-                desc = nfpa_data.get(key, {}).get("description", "").strip()
-                if value is None:
-                    value = "N/A"
-                if desc:
-                    nfpa_summary.append(f"{key}: {value} ({desc})")
-                else:
-                    nfpa_summary.append(f"{key}: {value}")
-            summary["NFPA Rating"] = "\n".join(nfpa_summary)
+            if isinstance(nfpa_data, list):
+                for idx, nfpa_entry in enumerate(nfpa_data):
+                    nfpa_summary = []
+                    for key in ["Health", "Flammability", "Instability", "Special"]:
+                        value = nfpa_entry.get(key, {}).get("value_html", "N/A")
+                        desc = nfpa_entry.get(key, {}).get("description", "").strip()
+                        if value is None:
+                            value = "N/A"
+                        if desc:
+                            nfpa_summary.append(f"{key}: {value} ({desc})")
+                        else:
+                            nfpa_summary.append(f"{key}: {value}")
+                    name = nfpa_entry.get("name", "NFPA")
+                    nfpa_summary.insert(0, f"Name: {name}")
+                    summary[f"NFPA Rating {idx+1}"] = "\n".join(nfpa_summary)
+            elif isinstance(nfpa_data, dict):
+                nfpa_summary = []
+                for key in ["Health", "Flammability", "Instability", "Special"]:
+                    value = nfpa_data.get(key, {}).get("value_html", "N/A")
+                    desc = nfpa_data.get(key, {}).get("description", "").strip()
+                    if value is None:
+                        value = "N/A"
+                    if desc:
+                        nfpa_summary.append(f"{key}: {value} ({desc})")
+                    else:
+                        nfpa_summary.append(f"{key}: {value}")
+                name = nfpa_data.get("name", "NFPA")
+                nfpa_summary.insert(0, f"Name: {name}")
+                summary["NFPA Rating"] = "\n".join(nfpa_summary)
 
         summaries.append(summary)
 
