@@ -12,6 +12,8 @@ cas_list = ['64-19-7', '3734-67-6']
 # cas_list = ['1245816-10-7', '1015484-22-6', '3734-67-6', '64-19-7']
 # cas_list = ['3734-67-6']
 
+failed = []
+
 def search_by_cas(cas_list):
     source = []
     results = []
@@ -28,6 +30,7 @@ def search_by_cas(cas_list):
                 print(f"PASSING IN SOURCE1: {source1}")
             else:
                 print(f"SDS file for {cas} not found, skipping parser.")
+                failed.append(cas)
     # st.rerun()
     return results
 

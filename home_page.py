@@ -5,6 +5,7 @@ import re
 
 import io
 from exporter import export_result_to_excel
+from test_cas_upload import failed
 
 # Configure page settings
 st.set_page_config(
@@ -257,6 +258,8 @@ def page_design(results, show_all=False):
 
 
 if st.session_state.submitted:
+    if failed:
+        st.warning(f"No SDS data found for the following CAS numbers: {', '.join(failed)}")
     if "all_results" not in st.session_state:
         results_combined = []
 
@@ -296,6 +299,7 @@ if st.session_state.submitted:
         st.rerun()
 
     else:
+        
         col0, col1, col2 = st.columns([6,18,5])
         if col1.button("Home", type="secondary"):
             for key in ["submitted", "uploaded", "inputs", "all_results", "show_data_editor"]:
