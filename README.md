@@ -24,7 +24,7 @@ Additional sources for cross reference: NIST, PubChem, CameoChemicals
 #
 
 ### App Flow
-```python
+```
 sds-ghs-extractor
 │
 ├── PDF Upload
@@ -139,25 +139,34 @@ parser.py/other_hazards
 
 ```
 NFPA Rating:
-- 
+test_no_selenium.py/fetch_nfpa_cameo
+  - test_no_selenium.py/get_cameo_links_from_pubchem
+test_no_selenium.py/compare_nfpa_results
+pub_nfpa.py/extract_nfpa_hazard
+
+- searches PubChem for CameoChemicals webpages links (CameoChemicals is loaded dynamically using JS to find pages for a 
+CAS number; to avoid using headless browsing/improve speed, used workaround to find list of some/most of the Cameo pages 
+for a CAS through PubChem)
+- finds CID from CAS number, then uses PUGREST API from PubChem to find all cited resources, specifically ones for a cameo webpage 
+(cameochemicals.noaa.gov/chemical/...)
+- checks all cameo pages for CAS number and makes sure it matches
+- from matches, it saves NFPA rating and Cameo's name
+- if multiple matches for one CAS, this app displays/exports all unique with their name from Cameo
+  - first checks if they are unique, if they're the same they are combined into one result
+- if no Cameo pages for NFPA rating, searches on PubChem
 ```
 
 ```
-Product Name:
-- 
+Flash Point/Appearance/Odor:
+- section 9 SDS
 ```
 
 ```
-Product Name:
-- 
+Storage Condition:
+- section 7 SDS
 ```
 
 ```
-Product Name:
-- 
-```
-
-```
-Product Name:
-- 
+Reactivity
+- section 10 SDS
 ```
