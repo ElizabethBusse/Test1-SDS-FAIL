@@ -2,6 +2,8 @@
 # Safety Data Sheet Parser
 [sdsreader.streamlit.app]()  
 Takes a while to load on first startup, please be patient :)  
+<img width="1170" height="756" alt="image" src="https://github.com/user-attachments/assets/9c3210c7-a554-49e3-b386-f148462b8032" />
+
 Note: parser **specified for Millipore-Sigma and AaronChem**, may not be accurate for other SDS sources
 ###
 Parse SDS files for:  
