@@ -64,28 +64,34 @@ def fetch_sigma_sds(cas):
 
 
 
-def find_sds_pdf_by_cas(cas):
-    pdf = fetch_aaronchem_sds(cas)
-    if pdf:
+
+def cas_reader(cas_list):
+    from sds_vendor_fetcher import find_sds_pdf_by_cas
+
+    if not cas_list:
         return {
-            "vendor": "AaronChem",
-            "pdf_bytes": pdf,
-            "source": "AaronChem"
+            "cas_number": None,
+            "source": None,
+            "error": "No CAS provided"
         }
 
-    pdf = fetch_sigma_sds(cas)
-    if pdf:
-        return {
-            "vendor": "Millipore-Sigma",
-            "pdf_bytes": pdf,
-            "source": "Millipore-Sigma"
-        }
+    cas = cas_list[0]
+
+    vendor_result = find_sds_pdf_by_cas(cas)
+
+    if vendor_result.get("pdf_bytes"):
+        pdf_bytes = vendor_result["pdf_bytes"]
+        vendor = vendor_result["vendor"]
+
+        text = streamlit_pdf_upload(pdf_bytes)
+
+        return parse_sds_file(
+            input_val=text,
+            source=f"CAS Lookup ({vendor})"
+        )
 
     return {
-        "vendor": None,
-        "pdf_bytes": None,
+        "cas_number": cas,
         "source": None,
-        "error": f"No SDS PDF found for CAS {cas} on AaronChem or Millipore-Sigma"
+        "error": vendor_result.get("error")
     }
-
-
