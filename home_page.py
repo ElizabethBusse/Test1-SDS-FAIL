@@ -304,6 +304,15 @@ if st.session_state.submitted:
             st.rerun()
         show_all = col2.toggle("Expand all", value=True)
         for result in st.session_state["all_results"]:
+            if not isinstance(result, dict):
+                continue
+
+            page_design(result, show_all=show_all)
+
+            if result.get("additional_cas"):
+                for additional in result["additional_cas"]:
+                    page_design(additional, show_all=show_all)
+for result in st.session_state["all_results"]:
             page_design(result, show_all=show_all)
             if result.get("additional_cas"):
                 for additional in result["additional_cas"]:
