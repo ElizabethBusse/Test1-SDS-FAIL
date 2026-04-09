@@ -63,17 +63,29 @@ def fetch_sigma_sds(cas):
     return None
 
 
+
 def find_sds_pdf_by_cas(cas):
-    # 1️⃣ AaronChem first
     pdf = fetch_aaronchem_sds(cas)
     if pdf:
-        return pdf, "AaronChem"
+        return {
+            "vendor": "AaronChem",
+            "pdf_bytes": pdf,
+            "source": "AaronChem"
+        }
 
-    # 2️⃣ Millipore-Sigma / Sigma-Aldrich
     pdf = fetch_sigma_sds(cas)
     if pdf:
-        return pdf, "Millipore-Sigma"
+        return {
+            "vendor": "Millipore-Sigma",
+            "pdf_bytes": pdf,
+            "source": "Millipore-Sigma"
+        }
 
-    # ❌ Not found in either vendor
-    return None, None
+    return {
+        "vendor": None,
+        "pdf_bytes": None,
+        "source": None,
+        "error": f"No SDS PDF found for CAS {cas} on AaronChem or Millipore-Sigma"
+    }
+
 
