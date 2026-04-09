@@ -1,4 +1,3 @@
-
 # two options: SDS upload or CAS search
 # collect all data that will be displayed onto streamlit UI
 
@@ -9,20 +8,41 @@ from test_parser import run_parser
 
 def sds_upload(pdf_file):
     """
-    Handles direct PDF uploads (THIS PATH IS UNCHANGED).
+    Handles direct PDF uploads.
+    This function is UNCHANGED and already works.
     """
     text = streamlit_pdf_upload(pdf_file)
-    results = run_parser(input_val=text)
-    return results
+    return run_parser(input_val=text)
+
+
+def looks_like_sds(text: str) -> bool:
+    """
+    Minimal SDS sanity check to avoid parsing non-SDS PDFs
+    (catalogs, specs, CoA, marketing sheets, etc.)
+    """
+    if not text:
+        return False
+
+    required_phrases = [
+        "safety data sheet",
+        "hazards identification",
+        "composition",
+        "first aid",
+    ]
+
+    text_lower = text.lower()
+    matches = sum(phrase in text_lower for phrase in required_phrases)
+    return matches >= 2
 
 
 def cas_reader(cas_list):
     """
-    Handles CAS input:
-    - Searches AaronChem first
+    CAS workflow:
+    - Try AaronChem first
     - Then Millipore-Sigma / Sigma-Aldrich
-    - Downloads ONE SDS PDF
-    - Feeds it into the SAME PDF pipeline as uploads
+    - Download ONE PDF
+    - Verify it is an SDS
+    - Feed it into the SAME pipeline as PDF uploads
     """
 
     results = []
@@ -30,13 +50,8 @@ def cas_reader(cas_list):
     for cas in cas_list:
         pdf_bytes, source = find_sds_pdf_by_cas(cas)
 
-        if pdf_bytes:
-            # ✅ Reuse the EXACT same working PDF logic
-            result = sds_upload(pdf_bytes)
-            result["source"] = source
-            results.append(result)
-        else:
-            # ❌ Explicit, user-visible error
+        # ❌ No PDF from either vendor
+        if not pdf_bytes:
             results.append({
                 "cas_number": cas,
                 "source": "CAS Search",
@@ -47,12 +62,38 @@ def cas_reader(cas_list):
                 "ghs_categories": None,
                 "nfpa": None,
             })
+            continue
+
+        # Extract text first (same method as PDF upload)
+        text = streamlit_pdf_upload(pdf_bytes)
+
+        # ❌ PDF is not actually an SDS
+        if not looks_like_sds(text):
+            results.append({
+                "cas_number": cas,
+                "source": source,
+                "notes": [
+                    "Downloaded PDF is not a valid Safety Data Sheet (SDS)"
+                ],
+                "ghs_from_sds": [],
+                "ghs_categories": None,
+                "nfpa": None,
+            })
+            continue
+
+        # ✅ Valid SDS → run the SAME parser as uploads
+        result = run_parser(input_val=text)
+        result["source"] = source
+        results.append(result)
 
     return results
 
 
 if __name__ == "__main__":
-    # Simple manual test
-    cas_list = ['64-19-7', '1015484-22-6', '000-00-0']
-    results = cas_reader(cas_list)
-    print(results)
+    # simple manual test
+    cas_list = ["64-19-7", "7732-18-5", "000-00-0"]
+    parsed = cas_reader(cas_list)
+    for r in parsed:
+        print(r.get("cas_number"), r.get("source"))
+``
+
