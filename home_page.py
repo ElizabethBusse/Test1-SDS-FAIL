@@ -297,37 +297,48 @@ if st.session_state.submitted:
 
 
 
+
 else:
-    # ✅ ALWAYS create columns first
+    # ✅ ALWAYS create layout first
     col0, col1, col2 = st.columns([6, 18, 5])
 
-    # ✅ Home button (restored exactly as before)
+    # ✅ Home button (unchanged behavior)
     if col1.button("Home", type="secondary"):
         for key in ["submitted", "uploaded", "inputs", "all_results", "show_data_editor"]:
             st.session_state.pop(key, None)
         st.rerun()
 
-    # ✅ Expand all toggle (restored)
     show_all = col2.toggle("Expand all", value=True)
 
     results = st.session_state.get("all_results", [])
 
-    # ✅ Empty-results guard (NEW, safe)
-    if not results:
+    # ✅ Detect whether the user actually provided input
+    has_uploaded_files = bool(st.session_state.get("uploaded"))
+
+    data_editor = st.session_state.get("inputs", {})
+    has_cas_input = bool(
+        data_editor.get("edited_rows") or
+        data_editor.get("added_rows")
+    )
+
+    has_any_input = has_uploaded_files or has_cas_input
+
+    # ✅ ONLY show warning if input was provided
+    if has_any_input and not results:
         st.warning(
             "No SDS results were found.\n\n"
             "This usually means:\n"
             "• The CAS does not exist on AaronChem or Millipore‑Sigma\n"
             "• OR the downloaded PDF was not a valid SDS"
         )
-    else:
+
+    elif results:
         for result in results:
             page_design(result, show_all=show_all)
             if result.get("additional_cas"):
                 for additional in result["additional_cas"]:
                     page_design(additional, show_all=show_all)
 
-        # ✅ Export button (only when results exist)
         output = export_result_to_excel(results)
         with col0:
             st.download_button(
@@ -337,4 +348,3 @@ else:
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 type="primary"
             )
-
