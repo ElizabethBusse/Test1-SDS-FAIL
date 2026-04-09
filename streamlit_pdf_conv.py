@@ -1,12 +1,34 @@
 
+from parser import streamlit_pdf_upload, parse_sds_file
+
+
+def sds_upload(pdf_file):
+    text = streamlit_pdf_upload(pdf_file)
+    return parse_sds_file(input_val=text, source="PDF Upload")
+
+
 def cas_reader(cas_list):
-    """
-    CAS-based SDS lookup with explicit vendor transparency.
-    """
     results = []
 
+    try:
+        from sds_vendor_fetcher import find_sds_pdf_by_cas
+    except Exception as e:
+        return [{
+            "error": "Failed to import sds_vendor_fetcher",
+            "details": str(e),
+            "cas_list": cas_list
+        }]
+
     for cas in cas_list:
-        vendor_result = find_sds_pdf_by_cas(cas)
+        try:
+            vendor_result = find_sds_pdf_by_cas(cas)
+        except Exception as e:
+            results.append({
+                "cas_number": cas,
+                "status": "VENDOR LOOKUP ERROR",
+                "error": str(e)
+            })
+            continue
 
         if vendor_result is None:
             results.append({
@@ -14,27 +36,24 @@ def cas_reader(cas_list):
                 "status": "NOT FOUND",
                 "vendor": None,
                 "sds_url": None,
-                "pdf_bytes": 0
+                "pdf_byte_size": 0
             })
             continue
 
-        # ✅ Explicit visibility
-        vendor = vendor_result["vendor"]
-        url = vendor_result["url"]
-        pdf_bytes = vendor_result["pdf_bytes"]
-        byte_size = vendor_result["byte_size"]
-
-        # Surface raw fetch info FIRST
-        diagnostic = {
-            "cas_number": cas,
-            "status": "FOUND",
-            "vendor": vendor,
-            "sds_url": url,
-            "pdf_byte_size": byte_size
-        }
-
-        # Attempt parsing
         try:
+            vendor = vendor_result.get("vendor")
+            url = vendor_result.get("url")
+            pdf_bytes = vendor_result.get("pdf_bytes")
+            byte_size = vendor_result.get("byte_size")
+
+            diagnostic = {
+                "cas_number": cas,
+                "status": "FOUND",
+                "vendor": vendor,
+                "sds_url": url,
+                "pdf_byte_size": byte_size
+            }
+
             text = streamlit_pdf_upload(pdf_bytes)
 
             if not text or len(text.strip()) < 50:
@@ -47,13 +66,15 @@ def cas_reader(cas_list):
                 source=f"CAS Lookup ({vendor})"
             )
 
-            # Merge diagnostic + parsed data
             parsed.update(diagnostic)
             results.append(parsed)
 
         except Exception as e:
-            diagnostic["parse_status"] = f"PARSER ERROR: {e}"
-            results.append(diagnostic)
+            results.append({
+                "cas_number": cas,
+                "status": "PARSER ERROR",
+                "error": str(e)
+            })
 
     return results
 
